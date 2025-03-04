@@ -8,6 +8,7 @@ import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { isNull } from "drizzle-orm";
 import { queryClient } from "../_layout";
+import { StatusBar } from "expo-status-bar";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
@@ -35,10 +36,11 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
+      <StatusBar style="dark" />
       <Text className="text-4xl font-public-sans-bold text-primary">Inbox</Text>
-      <View className="flex-row items-center gap-2 pt-2">
+      <View className="flex-row items-center gap-2 pt-5">
         <TextInput
-          className="border border-primary p-3 bg-white flex-1 font-public-sans-light"
+          className="border border-primary p-3 bg-white flex-1 font-public-sans-light text"
           placeholder="Add task..."
           placeholderTextColor={colors.secondary}
           value={description}
@@ -70,10 +72,33 @@ export default function InboxScreen() {
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ gap: 16, paddingTop: 20 }}
         renderItem={({ item }) => (
-          <Text className="font-public-sans-light">{item.description}</Text>
+          <View className="flex-row items-center gap-3">
+            <Bullet />
+            <Text className="font-public-sans-light text-lg">
+              {item.description}
+            </Text>
+          </View>
         )}
       />
     </SafeAreaView>
+  );
+}
+
+function Bullet() {
+  return (
+    <View
+      className="h-4 w-4 border border-primary rounded-full bg-background"
+      style={{
+        shadowOffset: {
+          height: 1,
+          width: 1,
+        },
+        shadowColor: colors.primary,
+        shadowOpacity: 1,
+        shadowRadius: 0,
+      }}
+    />
   );
 }
