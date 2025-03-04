@@ -12,27 +12,22 @@ import { StatusBar } from "expo-status-bar";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+
   const { data } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () =>
       await db.select().from(tasks).where(isNull(tasks.priority)),
   });
-  const { mutate } = useMutation({
+  const { mutate: addTask } = useMutation({
     mutationFn: async () => {
-      await db.insert(tasks).values({
-        description,
-      });
+      if (!description.trim()) return;
+      await db.insert(tasks).values({ description });
     },
     onSuccess: () => {
       setDescription("");
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-
-  const handleAddTask = () => {
-    if (description.trim() === "") return;
-    mutate();
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
@@ -46,7 +41,7 @@ export default function InboxScreen() {
           value={description}
           onChangeText={setDescription}
         />
-        <Pressable onPress={handleAddTask}>
+        <Pressable onPress={() => addTask()}>
           {({ pressed }) => (
             <View
               className="rounded-full p-3 border border-primary bg-background"
