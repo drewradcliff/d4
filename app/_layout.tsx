@@ -1,19 +1,21 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { PublicSans_300Light } from "@expo-google-fonts/public-sans";
+import { useEffect } from "react";
+import colors from "@/constants/Colors";
+import "react-native-reanimated";
+import "@/styles/global.css";
 import migrations from '@/drizzle/migrations';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import {
   useQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
 import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { db } from '@/db/client';
 
 const queryClient = new QueryClient();
@@ -21,19 +23,28 @@ const queryClient = new QueryClient();
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
-} from 'expo-router';
+} from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+const LightTheme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    card: colors.background,
+    text: colors.primary,
+  },
+};
+
 export default function RootLayout() {
-  const [fontsLoaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [loaded, error] = useFonts({
+    PublicSans_300Light,
     ...FontAwesome.font,
   });
 
@@ -48,7 +59,7 @@ export default function RootLayout() {
     retry: false, // fail fast
   }, queryClient);
 
-  const isLoading = !fontsLoaded || migrationsQuery.isLoading;
+  const isLoading = !loaded || migrationsQuery.isLoading;
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -73,14 +84,11 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={LightTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>
