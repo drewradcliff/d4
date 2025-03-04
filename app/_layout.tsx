@@ -8,6 +8,17 @@ import { useEffect } from "react";
 import colors from "@/constants/Colors";
 import "react-native-reanimated";
 import "@/styles/global.css";
+import migrations from '@/drizzle/migrations';
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
+
+import { db } from '@/db/client';
+
+const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -37,18 +48,35 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  const migrationsQuery = useQuery({
+    queryKey: ['migrations'],
+    queryFn: async () => {
+      await migrate(db, migrations);
+      return true;
+    },
+    gcTime: 0, // forget result after unmount
+    staleTime: Infinity, // don't refetch automatically
+    retry: false, // fail fast
+  }, queryClient);
+
+  const isLoading = !loaded || migrationsQuery.isLoading;
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (!isLoading) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [isLoading]);
 
-  if (!loaded) {
+  if (migrationsQuery.isError) {
+    alert(`Failed to migrate database\n${migrationsQuery.error.message}`);
+  }
+
+  if (isLoading) {
     return null;
   }
 
@@ -57,10 +85,12 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <ThemeProvider value={LightTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider value={LightTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
