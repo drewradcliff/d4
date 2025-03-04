@@ -3,22 +3,25 @@ import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { PublicSans_300Light } from "@expo-google-fonts/public-sans";
+import {
+  PublicSans_300Light,
+  PublicSans_700Bold,
+} from "@expo-google-fonts/public-sans";
 import { useEffect } from "react";
 import colors from "@/constants/Colors";
 import "react-native-reanimated";
 import "@/styles/global.css";
-import migrations from '@/drizzle/migrations';
+import migrations from "@/drizzle/migrations";
 import {
   useQuery,
   QueryClient,
   QueryClientProvider,
-} from '@tanstack/react-query';
-import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
+} from "@tanstack/react-query";
+import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 
-import { db } from '@/db/client';
+import { db } from "@/db/client";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,19 +48,23 @@ const LightTheme: Theme = {
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     PublicSans_300Light,
+    PublicSans_700Bold,
     ...FontAwesome.font,
   });
 
-  const migrationsQuery = useQuery({
-    queryKey: ['migrations'],
-    queryFn: async () => {
-      await migrate(db, migrations);
-      return true;
+  const migrationsQuery = useQuery(
+    {
+      queryKey: ["migrations"],
+      queryFn: async () => {
+        await migrate(db, migrations);
+        return true;
+      },
+      gcTime: 0, // forget result after unmount
+      staleTime: Infinity, // don't refetch automatically
+      retry: false, // fail fast
     },
-    gcTime: 0, // forget result after unmount
-    staleTime: Infinity, // don't refetch automatically
-    retry: false, // fail fast
-  }, queryClient);
+    queryClient
+  );
 
   const isLoading = !loaded || migrationsQuery.isLoading;
 
