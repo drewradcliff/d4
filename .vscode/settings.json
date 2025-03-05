@@ -1,9 +1,12 @@
 {
   "files.readonlyInclude": {
     ".expo/**": true,
+    "drizzle/**": true,
     "node_modules/**": true,
+    ".eslintcache": true,
     "expo-env.d.ts": true,
-    "nativewind-env.d.ts": true
+    "nativewind-env.d.ts": true,
+    "package-lock.json": true
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"

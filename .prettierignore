@@ -1,0 +1,6 @@
+.expo/
+node_modules/
+drizzle/
+expo-env.d.ts
+nativewind-env.d.ts
+package-lock.json
