@@ -1,17 +1,17 @@
-import { Pressable, Text, View } from "react-native";
-import { useState } from "react";
-import { FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { eq } from "drizzle-orm";
-import clsx from "clsx";
+import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
+import { eq } from "drizzle-orm";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { Pressable, Text, View, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { queryClient } from "@/app/_layout";
 import { ShadowView } from "@/components/shadow-view";
+import { colors } from "@/constants/Colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { colors } from "@/constants/Colors";
-import { Feather } from "@expo/vector-icons";
-import { queryClient } from "@/app/_layout";
 
 const tabs = new Map([
   ["do", "bg-do"],
@@ -51,15 +51,15 @@ export default function TasksScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
       <StatusBar style="dark" />
-      <Text className="text-4xl font-public-sans-bold text-primary">Tasks</Text>
+      <Text className="font-public-sans-bold text-4xl text-primary">Tasks</Text>
       <View className="flex-row items-center gap-3 pt-5">
         {Array.from(tabs.entries()).map(([tab, className]) => (
           <Pressable key={tab} onPress={() => setSelected(tab)}>
             {({ pressed }) => (
               <ShadowView
                 className={clsx(
-                  "px-3 p-2 justify-center items-center",
-                  selected === tab && className
+                  "items-center justify-center p-2 px-3",
+                  selected === tab && className,
                 )}
                 style={{
                   shadowOffset: {
@@ -74,8 +74,8 @@ export default function TasksScreen() {
               >
                 <Text
                   className={clsx(
-                    "text-primary font-public-sans-extra-light text-sm",
-                    selected === tab && "font-public-sans-bold"
+                    "font-public-sans-extra-light text-sm text-primary",
+                    selected === tab && "font-public-sans-bold",
                   )}
                 >
                   {tab.toUpperCase()}
@@ -85,7 +85,7 @@ export default function TasksScreen() {
           </Pressable>
         ))}
       </View>
-      <View className="border border-primary mt-6">
+      <View className="mt-6 border border-primary">
         <FlatList
           keyExtractor={(item) => item.id.toString()}
           data={data}
@@ -102,7 +102,7 @@ export default function TasksScreen() {
                   });
                 }}
               >
-                <ShadowView className="w-4 h-4 justify-center items-center">
+                <ShadowView className="h-4 w-4 items-center justify-center">
                   {item.completedAt && (
                     <Feather name="check" size={12} color={colors.primary} />
                   )}
@@ -110,8 +110,8 @@ export default function TasksScreen() {
               </Pressable>
               <Text
                 className={clsx(
-                  "text-primary font-public-sans-light",
-                  item.completedAt && "line-through"
+                  "font-public-sans-light text-primary",
+                  item.completedAt && "line-through",
                 )}
               >
                 {item.description}

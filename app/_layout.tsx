@@ -1,26 +1,26 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import {
   PublicSans_200ExtraLight,
   PublicSans_300Light,
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
-import { useEffect } from "react";
-import { colors } from "@/constants/Colors";
-import "react-native-reanimated";
-import "@/styles/global.css";
-import migrations from "@/drizzle/migrations";
+import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
 import {
   useQuery,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
+import { colors } from "@/constants/Colors";
+import "react-native-reanimated";
+import "@/styles/global.css";
 import { db } from "@/db/client";
+import migrations from "@/drizzle/migrations";
 
 export const queryClient = new QueryClient();
 
@@ -65,7 +65,7 @@ export default function RootLayout() {
       staleTime: Infinity, // don't refetch automatically
       retry: false, // fail fast
     },
-    queryClient
+    queryClient,
   );
 
   const isLoading = !loaded || migrationsQuery.isLoading;

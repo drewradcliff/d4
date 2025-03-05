@@ -14,5 +14,5 @@ export const tasks = sqliteTable(
       .notNull(),
     completedAt: text("completed_at"),
   },
-  (table) => [index("priority_idx").on(table.priority)]
+  (table) => [index("priority_idx").on(table.priority)],
 );

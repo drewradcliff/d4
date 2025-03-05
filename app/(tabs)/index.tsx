@@ -1,15 +1,17 @@
+import { Feather } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { isNull } from "drizzle-orm";
+import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
+
+import { queryClient } from "../_layout";
+
+import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/Colors";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { isNull } from "drizzle-orm";
-import { queryClient } from "../_layout";
-import { StatusBar } from "expo-status-bar";
-import { ShadowView } from "@/components/shadow-view";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
@@ -33,10 +35,10 @@ export default function InboxScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
       <StatusBar style="dark" />
-      <Text className="text-4xl font-public-sans-bold text-primary">Inbox</Text>
+      <Text className="font-public-sans-bold text-4xl text-primary">Inbox</Text>
       <View className="flex-row items-center gap-2 pt-5">
         <TextInput
-          className="border border-primary p-3 bg-white flex-1 font-public-sans-light text"
+          className="text flex-1 border border-primary bg-white p-3 font-public-sans-light"
           placeholder="Add task..."
           placeholderTextColor={colors.secondary}
           value={description}
