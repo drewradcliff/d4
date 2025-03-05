@@ -1,0 +1,13 @@
+{
+  "files.readonlyInclude": {
+    ".expo/**": true,
+    "node_modules/**": true,
+    "expo-env.d.ts": true,
+    "nativewind-env.d.ts": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+}
