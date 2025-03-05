@@ -1,17 +1,17 @@
-import { Pressable, Text, View } from "react-native";
-import { useState } from "react";
-import { FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { eq } from "drizzle-orm";
-import clsx from "clsx";
+import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
+import { eq } from "drizzle-orm";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { Pressable, Text, View, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { queryClient } from "@/app/_layout";
 import { ShadowView } from "@/components/shadow-view";
+import { colors } from "@/constants/Colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { colors } from "@/constants/Colors";
-import { Feather } from "@expo/vector-icons";
-import { queryClient } from "@/app/_layout";
 
 const tabs = new Map([
   ["do", "bg-do"],

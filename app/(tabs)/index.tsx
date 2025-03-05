@@ -1,15 +1,17 @@
+import { Feather } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { isNull } from "drizzle-orm";
+import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
+
+import { queryClient } from "../_layout";
+
+import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/Colors";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { isNull } from "drizzle-orm";
-import { queryClient } from "../_layout";
-import { StatusBar } from "expo-status-bar";
-import { ShadowView } from "@/components/shadow-view";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
