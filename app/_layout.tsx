@@ -9,7 +9,7 @@ import {
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
 import { useEffect } from "react";
-import colors from "@/constants/Colors";
+import { colors } from "@/constants/Colors";
 import "react-native-reanimated";
 import "@/styles/global.css";
 import migrations from "@/drizzle/migrations";

@@ -1,6 +1,6 @@
 import { View, ViewStyle } from "react-native";
 import clsx from "clsx";
-import colors from "@/constants/Colors";
+import { colors } from "@/constants/Colors";
 
 export function ShadowView({
   className,

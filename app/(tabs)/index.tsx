@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import colors from "@/constants/Colors";
+import { colors } from "@/constants/Colors";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
