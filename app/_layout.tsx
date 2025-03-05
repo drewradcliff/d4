@@ -4,11 +4,12 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import {
+  PublicSans_200ExtraLight,
   PublicSans_300Light,
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
 import { useEffect } from "react";
-import colors from "@/constants/Colors";
+import { colors } from "@/constants/Colors";
 import "react-native-reanimated";
 import "@/styles/global.css";
 import migrations from "@/drizzle/migrations";
@@ -47,6 +48,7 @@ const LightTheme: Theme = {
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
+    PublicSans_200ExtraLight,
     PublicSans_300Light,
     PublicSans_700Bold,
     ...FontAwesome.font,
