@@ -8,7 +8,10 @@ export default function TabLayout() {
         options={{ title: "Inbox", headerShown: false }}
       />
       <Tabs.Screen name="prioritize" options={{ title: "Prioritize" }} />
-      <Tabs.Screen name="tasks" options={{ title: "Tasks" }} />
+      <Tabs.Screen
+        name="tasks"
+        options={{ title: "Tasks", headerShown: false }}
+      />
     </Tabs>
   );
 }
