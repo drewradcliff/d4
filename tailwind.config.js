@@ -9,6 +9,7 @@ module.exports = {
       colors,
       fontFamily: {
         "public-sans-light": "PublicSans_300Light",
+        "public-sans-bold": "PublicSans_700Bold",
       },
     },
   },
