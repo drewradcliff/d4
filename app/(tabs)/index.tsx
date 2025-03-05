@@ -33,10 +33,10 @@ export default function InboxScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
       <StatusBar style="dark" />
-      <Text className="text-4xl font-public-sans-bold text-primary">Inbox</Text>
+      <Text className="font-public-sans-bold text-4xl text-primary">Inbox</Text>
       <View className="flex-row items-center gap-2 pt-5">
         <TextInput
-          className="border border-primary p-3 bg-white flex-1 font-public-sans-light text"
+          className="text flex-1 border border-primary bg-white p-3 font-public-sans-light"
           placeholder="Add task..."
           placeholderTextColor={colors.secondary}
           value={description}

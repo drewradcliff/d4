@@ -48,10 +48,14 @@
   },
   "private": true,
   "eslintConfig": {
-    "extends": ["universe/native"]
+    "extends": [
+      "universe/native"
+    ]
   },
   "prettier": {
-    "plugins": ["prettier-plugin-tailwindcss"]
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   },
   "volta": {
     "node": "22.14.0"

@@ -65,7 +65,7 @@ export default function RootLayout() {
       staleTime: Infinity, // don't refetch automatically
       retry: false, // fail fast
     },
-    queryClient
+    queryClient,
   );
 
   const isLoading = !loaded || migrationsQuery.isLoading;
