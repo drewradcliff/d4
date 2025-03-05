@@ -1,4 +1,4 @@
-import colors from "./constants/Colors";
+import { colors } from "./constants/Colors";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       colors,
       fontFamily: {
+        "public-sans-extra-light": "PublicSans_200ExtraLight",
         "public-sans-light": "PublicSans_300Light",
         "public-sans-bold": "PublicSans_700Bold",
       },
