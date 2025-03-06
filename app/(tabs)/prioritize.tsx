@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -9,44 +10,60 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ShadowView } from "@/components/shadow-view";
+import { colors } from "@/constants/Colors";
 
 const RADIUS = 250;
 
-export default function PrioritizeScreen() {
-  const translationX = useSharedValue(0);
-  const translationY = useSharedValue(0);
+const getPriority = (x: number, y: number) => {
+  if (x < 0 && y < 0) return "do";
+  if (x > 0 && y < 0) return "decide";
+  if (x < 0 && y > 0) return "delegate";
+  if (x > 0 && y > 0) return "delete";
+};
 
-  const animatedStyles = useAnimatedStyle(() => ({
+const getDistance = (x: number, y: number) => {
+  return Math.sqrt(x ** 2 + y ** 2);
+};
+
+export default function PrioritizeScreen() {
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(0);
+  const priority = useSharedValue<ReturnType<typeof getPriority>>(undefined);
+
+  const animatedViewStyles = useAnimatedStyle(() => ({
     transform: [
-      { translateX: translationX.value },
-      { translateY: translationY.value },
+      { translateX: translateX.value },
+      { translateY: translateY.value },
     ],
+  }));
+
+  const animatedShadowViewStyles = useAnimatedStyle(() => ({
+    opacity: opacity.value,
   }));
 
   const pan = Gesture.Pan()
     .onUpdate((event) => {
-      translationX.value = event.translationX;
-      translationY.value = event.translationY;
-    })
-    .onEnd((event) => {
-      const distance = Math.sqrt(
-        event.translationX ** 2 + event.translationY ** 2,
-      );
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+      priority.value = getPriority(event.translationX, event.translationY);
+
+      const distance = getDistance(event.translationX, event.translationY);
       console.log(distance);
+      console.log("opacity: ", distance / RADIUS);
+
+      opacity.value = distance / RADIUS;
+    })
+    .onEnd(({ translationX, translationY }) => {
+      const distance = getDistance(translationX, translationY);
       if (Math.abs(distance) > RADIUS) {
-        if (event.translationX > 0 && event.translationY < 0) {
-          console.log("decide");
-        } else if (event.translationX < 0 && event.translationY < 0) {
-          console.log("do");
-        } else if (event.translationX < 0 && event.translationY > 0) {
-          console.log("delegate");
-        } else {
-          console.log("delete");
-        }
+        const priority = getPriority(translationX, translationY);
+        console.log(priority);
       } else {
         // smoothly translate to origin
-        translationX.value = withTiming(0, { duration: 100 });
-        translationY.value = withTiming(0, { duration: 100 });
+        translateX.value = withTiming(0, { duration: 100 });
+        translateY.value = withTiming(0, { duration: 100 });
+        opacity.value = withTiming(0, { duration: 100 });
       }
     })
     .runOnJS(true);
@@ -65,15 +82,28 @@ export default function PrioritizeScreen() {
       <GestureDetector gesture={pan}>
         <Animated.View
           className="flex-1 items-center justify-center"
-          style={animatedStyles}
+          style={animatedViewStyles}
         >
           <ShadowView
-            className="h-[250px] w-[250px] bg-white px-7 py-9"
+            className="relative h-[250px] w-[250px]"
             style={{ shadowOffset: { height: 4, width: 4 } }}
           >
-            <Text className="font-public-sans-bold text-4xl text-primary">
-              Write blog post
-            </Text>
+            <Animated.View
+              className="absolute size-full"
+              style={[
+                {
+                  backgroundColor: priority.value
+                    ? colors[priority.value]
+                    : "white",
+                },
+                animatedShadowViewStyles,
+              ]}
+            />
+            <View className="px-7 py-9">
+              <Text className="font-public-sans-bold text-4xl text-primary">
+                Write blog post
+              </Text>
+            </View>
           </ShadowView>
         </Animated.View>
       </GestureDetector>
