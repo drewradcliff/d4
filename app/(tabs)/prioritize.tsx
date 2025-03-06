@@ -1,24 +1,26 @@
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
 import { Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  interpolateColor,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/Colors";
 
-const RADIUS = 250;
+const RADIUS = 125;
 
 const getPriority = (x: number, y: number) => {
+  "worklet";
   if (x < 0 && y < 0) return "do";
   if (x > 0 && y < 0) return "decide";
   if (x < 0 && y > 0) return "delegate";
   if (x > 0 && y > 0) return "delete";
+  return undefined;
 };
 
 const getDistance = (x: number, y: number) => {
@@ -28,8 +30,7 @@ const getDistance = (x: number, y: number) => {
 export default function PrioritizeScreen() {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const opacity = useSharedValue(0);
-  const priority = useSharedValue<ReturnType<typeof getPriority>>(undefined);
+  const colorProgress = useSharedValue(0);
 
   const animatedViewStyles = useAnimatedStyle(() => ({
     transform: [
@@ -38,21 +39,30 @@ export default function PrioritizeScreen() {
     ],
   }));
 
-  const animatedShadowViewStyles = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+  const animatedColorStyle = useAnimatedStyle(() => {
+    const currentPriority = getPriority(translateX.value, translateY.value);
+    const backgroundColor = currentPriority
+      ? interpolateColor(
+          colorProgress.value,
+          [0, 1],
+          ["white", colors[currentPriority]],
+        )
+      : "white";
+
+    return {
+      backgroundColor,
+    };
+  });
 
   const pan = Gesture.Pan()
     .onUpdate((event) => {
       translateX.value = event.translationX;
       translateY.value = event.translationY;
-      priority.value = getPriority(event.translationX, event.translationY);
 
       const distance = getDistance(event.translationX, event.translationY);
       console.log(distance);
-      console.log("opacity: ", distance / RADIUS);
 
-      opacity.value = distance / RADIUS;
+      colorProgress.value = Math.min(distance / (RADIUS * 0.7), 1);
     })
     .onEnd(({ translationX, translationY }) => {
       const distance = getDistance(translationX, translationY);
@@ -63,7 +73,7 @@ export default function PrioritizeScreen() {
         // smoothly translate to origin
         translateX.value = withTiming(0, { duration: 100 });
         translateY.value = withTiming(0, { duration: 100 });
-        opacity.value = withTiming(0, { duration: 100 });
+        colorProgress.value = withTiming(0, { duration: 100 });
       }
     })
     .runOnJS(true);
@@ -90,14 +100,7 @@ export default function PrioritizeScreen() {
           >
             <Animated.View
               className="absolute size-full"
-              style={[
-                {
-                  backgroundColor: priority.value
-                    ? colors[priority.value]
-                    : "white",
-                },
-                animatedShadowViewStyles,
-              ]}
+              style={[animatedColorStyle]}
             />
             <View className="px-7 py-9">
               <Text className="font-public-sans-bold text-4xl text-primary">
