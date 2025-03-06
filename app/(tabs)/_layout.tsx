@@ -2,15 +2,10 @@ import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{ title: "Inbox", headerShown: false }}
-      />
-      <Tabs.Screen
-        name="tasks"
-        options={{ title: "Tasks", headerShown: false }}
-      />
+    <Tabs screenOptions={{ headerShown: false }}>
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="prioritize" />
+      <Tabs.Screen name="tasks" />
     </Tabs>
   );
 }

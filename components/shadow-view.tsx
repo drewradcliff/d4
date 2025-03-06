@@ -24,10 +24,7 @@ export function ShadowView({
         shadowRadius: 0,
         ...style,
       }}
-      className={clsx([
-        "rounded-full border border-primary bg-background",
-        className,
-      ])}
+      className={clsx(["border border-primary bg-background", className])}
     >
       {children}
     </View>

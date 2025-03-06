@@ -15,6 +15,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { colors } from "@/constants/Colors";
 import "react-native-reanimated";
@@ -95,11 +96,13 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={LightTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </ThemeProvider>
+      <GestureHandlerRootView>
+        <ThemeProvider value={LightTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </ThemeProvider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }

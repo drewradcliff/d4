@@ -58,7 +58,7 @@ export default function TasksScreen() {
             {({ pressed }) => (
               <ShadowView
                 className={clsx(
-                  "items-center justify-center p-2 px-3",
+                  "items-center justify-center rounded-full p-2 px-3",
                   selected === tab && className,
                 )}
                 style={{
@@ -102,7 +102,7 @@ export default function TasksScreen() {
                   });
                 }}
               >
-                <ShadowView className="h-4 w-4 items-center justify-center">
+                <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
                   {item.completedAt && (
                     <Feather name="check" size={12} color={colors.primary} />
                   )}
