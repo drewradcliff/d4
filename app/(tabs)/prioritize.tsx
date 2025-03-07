@@ -14,15 +14,21 @@ import Svg, { Line } from "react-native-svg";
 import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/colors";
 
+const COLORS = [colors.do, colors.decide, colors.delegate, colors.delete];
 const RADIUS = 125;
+const ANGLE = 10;
 
 export default function PrioritizeScreen() {
-  const colorIntensity = useSharedValue(0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
   const distance = useDerivedValue(() => {
     return Math.sqrt(translateX.value ** 2 + translateY.value ** 2);
+  });
+  const angle = useDerivedValue(() => {
+    return (
+      Math.atan2(translateY.value, translateX.value) * (180 / Math.PI) + 180
+    );
   });
   const priority = useDerivedValue(() => {
     if (translateX.value < 0 && translateY.value < 0) return "do";
@@ -32,23 +38,32 @@ export default function PrioritizeScreen() {
     return undefined;
   });
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    backgroundColor: priority.value
-      ? interpolateColor(
-          colorIntensity.value,
-          [0, 1],
-          ["white", colors[priority.value]],
-        )
-      : "white",
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-    ],
-  }));
+  const animatedStyles = useAnimatedStyle(() => {
+    const quadrant = Math.floor(angle.value / 90);
+    const localAngle = angle.value % 90;
+
+    const color = COLORS[quadrant];
+    const minAngle = ANGLE;
+    const maxAngle = 90 - ANGLE;
+
+    const backgroundColor =
+      localAngle < minAngle
+        ? interpolateColor(localAngle, [0, minAngle], ["white", color])
+        : localAngle > maxAngle
+          ? interpolateColor(localAngle, [maxAngle, 90], [color, "white"])
+          : color;
+
+    return {
+      backgroundColor,
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+      ],
+    };
+  });
 
   const pan = Gesture.Pan()
     .onUpdate((event) => {
-      colorIntensity.value = Math.min(distance.value / RADIUS, 1);
       translateX.value = event.translationX;
       translateY.value = event.translationY;
     })
@@ -57,7 +72,6 @@ export default function PrioritizeScreen() {
         console.log(priority.value);
       } else {
         // smoothly translate to origin
-        colorIntensity.value = withTiming(0, { duration: 100 });
         translateX.value = withTiming(0, { duration: 100 });
         translateY.value = withTiming(0, { duration: 100 });
       }
