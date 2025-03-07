@@ -6,74 +6,61 @@ import Animated, {
   useSharedValue,
   withTiming,
   interpolateColor,
+  useDerivedValue,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 
 const RADIUS = 125;
 
-const getPriority = (x: number, y: number) => {
-  "worklet";
-  if (x < 0 && y < 0) return "do";
-  if (x > 0 && y < 0) return "decide";
-  if (x < 0 && y > 0) return "delegate";
-  if (x > 0 && y > 0) return "delete";
-  return undefined;
-};
-
-const getDistance = (x: number, y: number) => {
-  return Math.sqrt(x ** 2 + y ** 2);
-};
-
 export default function PrioritizeScreen() {
+  const colorIntensity = useSharedValue(0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const colorProgress = useSharedValue(0);
 
-  const animatedViewStyles = useAnimatedStyle(() => ({
+  const distance = useDerivedValue(() => {
+    return Math.sqrt(translateX.value ** 2 + translateY.value ** 2);
+  });
+  const priority = useDerivedValue(() => {
+    if (translateX.value < 0 && translateY.value < 0) return "do";
+    if (translateX.value > 0 && translateY.value < 0) return "decide";
+    if (translateX.value < 0 && translateY.value > 0) return "delegate";
+    if (translateX.value > 0 && translateY.value > 0) return "delete";
+    return undefined;
+  });
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    backgroundColor: priority.value
+      ? interpolateColor(
+          colorIntensity.value,
+          [0, 1],
+          ["white", colors[priority.value]],
+        )
+      : "white",
     transform: [
       { translateX: translateX.value },
       { translateY: translateY.value },
     ],
   }));
 
-  const animatedColorStyle = useAnimatedStyle(() => {
-    const currentPriority = getPriority(translateX.value, translateY.value);
-    const backgroundColor = currentPriority
-      ? interpolateColor(
-          colorProgress.value,
-          [0, 1],
-          ["white", colors[currentPriority]],
-        )
-      : "white";
-
-    return {
-      backgroundColor,
-    };
-  });
-
   const pan = Gesture.Pan()
     .onUpdate((event) => {
+      colorIntensity.value = Math.min(distance.value / RADIUS, 1);
       translateX.value = event.translationX;
       translateY.value = event.translationY;
 
-      const distance = getDistance(event.translationX, event.translationY);
-      console.log(distance);
-
-      colorProgress.value = Math.min(distance / (RADIUS * 0.7), 1);
+      console.log(distance.value);
     })
-    .onEnd(({ translationX, translationY }) => {
-      const distance = getDistance(translationX, translationY);
-      if (Math.abs(distance) > RADIUS) {
-        const priority = getPriority(translationX, translationY);
-        console.log(priority);
+    .onEnd(() => {
+      if (Math.abs(distance.value) > RADIUS) {
+        console.log(priority.value);
       } else {
         // smoothly translate to origin
+        colorIntensity.value = withTiming(0, { duration: 100 });
         translateX.value = withTiming(0, { duration: 100 });
         translateY.value = withTiming(0, { duration: 100 });
-        colorProgress.value = withTiming(0, { duration: 100 });
       }
     })
     .runOnJS(true);
@@ -90,25 +77,17 @@ export default function PrioritizeScreen() {
       </Text>
       <View className="absolute left-0 top-0 h-full w-full border-t border-dashed border-secondary" />
       <GestureDetector gesture={pan}>
-        <Animated.View
-          className="flex-1 items-center justify-center"
-          style={animatedViewStyles}
-        >
+        <View className="flex-1 items-center justify-center">
           <ShadowView
-            className="relative h-[250px] w-[250px]"
-            style={{ shadowOffset: { height: 4, width: 4 } }}
+            as={Animated.View}
+            className="relative h-[250px] w-[250px] px-7 py-9"
+            style={[{ shadowOffset: { height: 4, width: 4 } }, animatedStyles]}
           >
-            <Animated.View
-              className="absolute size-full"
-              style={[animatedColorStyle]}
-            />
-            <View className="px-7 py-9">
-              <Text className="font-public-sans-bold text-4xl text-primary">
-                Write blog post
-              </Text>
-            </View>
+            <Text className="font-public-sans-bold text-4xl text-primary">
+              Write blog post
+            </Text>
           </ShadowView>
-        </Animated.View>
+        </View>
       </GestureDetector>
     </SafeAreaView>
   );

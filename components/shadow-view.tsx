@@ -1,32 +1,30 @@
 import clsx from "clsx";
-import { View, ViewStyle } from "react-native";
+import { View, type ViewProps } from "react-native";
 
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 
 export function ShadowView({
+  as: Component = View,
   className,
   style,
-  children,
-}: {
-  className?: string;
-  style?: ViewStyle;
-  children?: React.ReactNode;
-}) {
+  ...props
+}: ViewProps & { as?: React.ElementType }) {
   return (
-    <View
-      style={{
-        shadowOffset: {
-          height: 1,
-          width: 1,
-        },
-        shadowColor: colors.primary,
-        shadowOpacity: 1,
-        shadowRadius: 0,
-        ...style,
-      }}
+    <Component
       className={clsx(["border border-primary bg-background", className])}
-    >
-      {children}
-    </View>
+      style={[
+        {
+          shadowOffset: {
+            height: 1,
+            width: 1,
+          },
+          shadowColor: colors.primary,
+          shadowOpacity: 1,
+          shadowRadius: 0,
+        },
+        style,
+      ]}
+      {...props}
+    />
   );
 }

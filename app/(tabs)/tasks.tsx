@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { queryClient } from "@/app/_layout";
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 
