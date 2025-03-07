@@ -17,7 +17,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 import "react-native-reanimated";
 import "@/styles/global.css";
 import { db } from "@/db/client";
