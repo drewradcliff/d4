@@ -14,6 +14,7 @@ import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -98,6 +99,7 @@ function RootLayoutNav() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
         <ThemeProvider value={LightTheme}>
+          <StatusBar style="dark" />
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>

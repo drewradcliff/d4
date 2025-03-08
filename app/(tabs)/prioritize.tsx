@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -14,9 +13,7 @@ import Svg, { Line } from "react-native-svg";
 import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/colors";
 
-const COLORS = [colors.do, colors.decide, colors.delegate, colors.delete];
 const RADIUS = 125;
-const ANGLE = 10;
 
 export default function PrioritizeScreen() {
   const translateX = useSharedValue(0);
@@ -24,11 +21,6 @@ export default function PrioritizeScreen() {
 
   const distance = useDerivedValue(() => {
     return Math.sqrt(translateX.value ** 2 + translateY.value ** 2);
-  });
-  const angle = useDerivedValue(() => {
-    return (
-      Math.atan2(translateY.value, translateX.value) * (180 / Math.PI) + 180
-    );
   });
   const priority = useDerivedValue(() => {
     if (translateX.value < 0 && translateY.value < 0) return "do";
@@ -38,29 +30,12 @@ export default function PrioritizeScreen() {
     return undefined;
   });
 
-  const animatedStyles = useAnimatedStyle(() => {
-    const quadrant = Math.floor(angle.value / 90);
-    const localAngle = angle.value % 90;
-
-    const color = COLORS[quadrant];
-    const minAngle = ANGLE;
-    const maxAngle = 90 - ANGLE;
-
-    const backgroundColor =
-      localAngle < minAngle
-        ? interpolateColor(localAngle, [0, minAngle], ["white", color])
-        : localAngle > maxAngle
-          ? interpolateColor(localAngle, [maxAngle, 90], [color, "white"])
-          : color;
-
-    return {
-      backgroundColor,
-      transform: [
-        { translateX: translateX.value },
-        { translateY: translateY.value },
-      ],
-    };
-  });
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
 
   const pan = Gesture.Pan()
     .onUpdate((event) => {
@@ -79,8 +54,7 @@ export default function PrioritizeScreen() {
     .runOnJS(true);
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <StatusBar style="dark" />
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <View className="p-6">
         <Text className="font-public-sans-bold text-4xl text-primary">
           Prioritize
