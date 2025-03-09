@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   PublicSans_200ExtraLight,
   PublicSans_300Light,
+  PublicSans_400Regular,
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
 import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
@@ -52,6 +53,7 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     PublicSans_200ExtraLight,
     PublicSans_300Light,
+    PublicSans_400Regular,
     PublicSans_700Bold,
     ...FontAwesome.font,
   });

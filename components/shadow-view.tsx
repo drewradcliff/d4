@@ -1,17 +1,17 @@
 import clsx from "clsx";
-import { View, type ViewProps } from "react-native";
+import { forwardRef } from "react";
+import { View, ViewProps } from "react-native";
 
 import { colors } from "@/constants/colors";
 
-export function ShadowView({
-  as: Component = View,
-  className,
-  style,
-  ...props
-}: ViewProps & { as?: React.ElementType }) {
+export const ShadowView = forwardRef<
+  View,
+  ViewProps & { as?: React.ElementType }
+>(({ as: Component = View, className, style, ...props }, ref) => {
   return (
     <Component
-      className={clsx(["border border-primary bg-background", className])}
+      className={clsx("border border-primary bg-background", className)}
+      ref={ref}
       style={[
         {
           shadowOffset: {
@@ -27,4 +27,6 @@ export function ShadowView({
       {...props}
     />
   );
-}
+});
+
+ShadowView.displayName = "ShadowView";
