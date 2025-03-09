@@ -16,7 +16,8 @@ import { colors } from "@/constants/colors";
 
 const COLORS = [colors.do, colors.decide, colors.delegate, colors.delete];
 const RADIUS = 125;
-const ANGLE = 10;
+const MIN_ANGLE = 10;
+const MAX_ANGLE = 90 - MIN_ANGLE;
 
 export default function PrioritizeScreen() {
   const translateX = useSharedValue(0);
@@ -37,20 +38,25 @@ export default function PrioritizeScreen() {
     if (translateX.value > 0 && translateY.value > 0) return "delete";
     return undefined;
   });
+  const localAngle = useDerivedValue(() => {
+    return Math.max(0, Math.min(90, angle.value % 90));
+  });
 
   const animatedStyles = useAnimatedStyle(() => {
     const quadrant = Math.floor(angle.value / 90);
-    const localAngle = angle.value % 90;
 
-    const color = COLORS[quadrant];
-    const minAngle = ANGLE;
-    const maxAngle = 90 - ANGLE;
+    const safeQuadrant = Math.max(0, Math.min(3, quadrant));
+    const color = COLORS[safeQuadrant];
 
     const backgroundColor =
-      localAngle < minAngle
-        ? interpolateColor(localAngle, [0, minAngle], ["white", color])
-        : localAngle > maxAngle
-          ? interpolateColor(localAngle, [maxAngle, 90], [color, "white"])
+      localAngle.value < MIN_ANGLE
+        ? interpolateColor(localAngle.value, [0, MIN_ANGLE], ["white", color])
+        : localAngle.value > MAX_ANGLE
+          ? interpolateColor(
+              localAngle.value,
+              [MAX_ANGLE, 90],
+              [color, "white"],
+            )
           : color;
 
     return {
@@ -62,13 +68,23 @@ export default function PrioritizeScreen() {
     };
   });
 
+  const whiteBackgroundStyle = useAnimatedStyle(() => {
+    return {
+      opacity: Math.max(0, 1 - distance.value / RADIUS),
+    };
+  });
+
   const pan = Gesture.Pan()
     .onUpdate((event) => {
       translateX.value = event.translationX;
       translateY.value = event.translationY;
     })
     .onEnd(() => {
-      if (Math.abs(distance.value) > RADIUS) {
+      if (
+        Math.abs(distance.value) > RADIUS &&
+        localAngle.value > MIN_ANGLE &&
+        localAngle.value < MAX_ANGLE
+      ) {
         console.log(priority.value);
       } else {
         // smoothly translate to origin
@@ -125,6 +141,10 @@ export default function PrioritizeScreen() {
                 animatedStyles,
               ]}
             >
+              <Animated.View
+                className="absolute inset-0 bg-white"
+                style={whiteBackgroundStyle}
+              />
               <Text className="font-public-sans-bold text-4xl text-primary">
                 Write blog post
               </Text>
