@@ -10,6 +10,7 @@ module.exports = {
       fontFamily: {
         "public-sans-extra-light": "PublicSans_200ExtraLight",
         "public-sans-light": "PublicSans_300Light",
+        "public-sans-regular": "PublicSans_400Regular",
         "public-sans-bold": "PublicSans_700Bold",
       },
     },

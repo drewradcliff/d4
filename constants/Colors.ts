@@ -7,4 +7,5 @@ export const colors = {
   decide: "#FDFFDA",
   delegate: "#CCE5FF",
   delete: "#FFD5D5",
+  tabBackground: "#FDE3FF",
 };
