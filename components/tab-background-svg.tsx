@@ -1,6 +1,6 @@
 import Svg, { Path } from "react-native-svg";
 
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 
 export const TabBackgroundSvg = () => {
   return (
