@@ -12,7 +12,8 @@ import Svg, { Line } from "react-native-svg";
 import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/colors";
 
-const MIN_DISTANCE = 100;
+const CARD_SIZE = 250;
+const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
 
 export default function PrioritizeScreen() {
   const translateX = useSharedValue(0);
@@ -30,9 +31,7 @@ export default function PrioritizeScreen() {
 
     const dx = Math.abs(translateX.value);
     const dy = Math.abs(translateY.value);
-
-    if (dx >= MIN_DISTANCE && dy >= MIN_DISTANCE) return 0;
-    return Math.max(1 - (dx / MIN_DISTANCE) * (dy / MIN_DISTANCE), 0);
+    return Math.max(1 - Math.min(dx / MIN_DISTANCE, dy / MIN_DISTANCE), 0);
   });
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({
@@ -102,9 +101,12 @@ export default function PrioritizeScreen() {
         <GestureDetector gesture={pan}>
           <ShadowView
             as={Animated.View}
-            className="h-[250px] w-[250px]"
             style={[
-              { shadowOffset: { height: 4, width: 4 } },
+              {
+                height: CARD_SIZE,
+                width: CARD_SIZE,
+                shadowOffset: { height: 4, width: 4 },
+              },
               cardAnimatedStyle,
             ]}
           >
