@@ -4,7 +4,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  interpolateColor,
   useDerivedValue,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,28 +12,38 @@ import Svg, { Line } from "react-native-svg";
 import { ShadowView } from "@/components/shadow-view";
 import { colors } from "@/constants/colors";
 
-const RADIUS = 125;
+const MIN_DISTANCE = 100;
 
 export default function PrioritizeScreen() {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
-  const distance = useDerivedValue(() => {
-    return Math.sqrt(translateX.value ** 2 + translateY.value ** 2);
-  });
-  const priority = useDerivedValue(() => {
+  const backgroundColor = useDerivedValue(() => {
     if (translateX.value < 0 && translateY.value < 0) return "do";
     if (translateX.value > 0 && translateY.value < 0) return "decide";
     if (translateX.value < 0 && translateY.value > 0) return "delegate";
     if (translateX.value > 0 && translateY.value > 0) return "delete";
-    return undefined;
+    return "white";
+  });
+  const opacity = useDerivedValue(() => {
+    if (translateX.value === 0 || translateY.value === 0) return 1;
+
+    const dx = Math.abs(translateX.value);
+    const dy = Math.abs(translateY.value);
+
+    if (dx >= MIN_DISTANCE && dy >= MIN_DISTANCE) return 0;
+    return Math.max(1 - (dx / MIN_DISTANCE) * (dy / MIN_DISTANCE), 0);
   });
 
-  const animatedStyles = useAnimatedStyle(() => ({
+  const cardAnimatedStyle = useAnimatedStyle(() => ({
+    backgroundColor: colors[backgroundColor.value],
     transform: [
       { translateX: translateX.value },
       { translateY: translateY.value },
     ],
+  }));
+  const cardBackgroundAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
   }));
 
   const pan = Gesture.Pan()
@@ -43,8 +52,9 @@ export default function PrioritizeScreen() {
       translateY.value = event.translationY;
     })
     .onEnd(() => {
-      if (Math.abs(distance.value) > RADIUS) {
-        console.log(priority.value);
+      if (opacity.value === 0) {
+        // transition task
+        console.log(backgroundColor.value);
       } else {
         // smoothly translate to origin
         translateX.value = withTiming(0, { duration: 100 });
@@ -92,12 +102,21 @@ export default function PrioritizeScreen() {
         <GestureDetector gesture={pan}>
           <ShadowView
             as={Animated.View}
-            className="h-[250px] w-[250px] px-7 py-9"
-            style={[{ shadowOffset: { height: 4, width: 4 } }, animatedStyles]}
+            className="h-[250px] w-[250px]"
+            style={[
+              { shadowOffset: { height: 4, width: 4 } },
+              cardAnimatedStyle,
+            ]}
           >
-            <Text className="font-public-sans-bold text-4xl text-primary">
-              Write blog post
-            </Text>
+            <Animated.View
+              className="absolute size-full bg-white"
+              style={cardBackgroundAnimatedStyle}
+            />
+            <View className="px-7 py-9">
+              <Text className="font-public-sans-bold text-4xl text-primary">
+                Write blog post
+              </Text>
+            </View>
           </ShadowView>
         </GestureDetector>
       </View>

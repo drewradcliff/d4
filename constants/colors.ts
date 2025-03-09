@@ -1,11 +1,15 @@
 export const colors = {
-  background: "#FAF7F5",
   primary: "#150033",
-  secondary: "#524D58",
-  placeholder: "#9C99A0",
-  do: "#DFFFD5",
-  decide: "#FDFFDA",
-  delegate: "#CCE5FF",
-  delete: "#FFD5D5",
-  tabBackground: "#FDE3FF",
+  secondary: "#524d58",
+  background: "#faf7f5",
+  tabBackground: "#fde3ff",
+  placeholder: "#9c99a0",
+
+  do: "#dfffd5",
+  decide: "#fdffda",
+  delegate: "#cce5ff",
+  delete: "#ffd5d5",
+
+  white: "#ffffff",
+  black: "#000000",
 };
