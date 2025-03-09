@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -17,6 +17,7 @@ const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
 
 export default function PrioritizeScreen() {
+  const [priority, setPriority] = useState<string>();
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
@@ -35,13 +36,6 @@ export default function PrioritizeScreen() {
     return Math.max(1 - Math.min(dx / MIN_DISTANCE, dy / MIN_DISTANCE), 0);
   });
 
-  const [priority, setPriority] = useState<string>();
-  useEffect(() => {
-    if (backgroundColor.value === "white") return;
-    console.log(backgroundColor.value);
-    setPriority(backgroundColor.value);
-  }, [backgroundColor.value]);
-
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     backgroundColor: colors[backgroundColor.value],
     transform: [
@@ -57,6 +51,9 @@ export default function PrioritizeScreen() {
     .onUpdate((event) => {
       translateX.value = event.translationX;
       translateY.value = event.translationY;
+
+      if (backgroundColor.value === "white") return;
+      setPriority(backgroundColor.value);
     })
     .onEnd(() => {
       if (opacity.value === 0) {
