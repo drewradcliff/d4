@@ -64,47 +64,42 @@ export default function PrioritizeScreen() {
           <Text className="underline">Learn more</Text> about Eisenhower Matrix.
         </Text>
       </View>
-      <View className="flex-1">
-        <View className="absolute inset-0 flex items-center justify-center">
-          <Svg height="1" width="100%">
-            <Line
-              x1="0"
-              y1="0"
-              x2="100%"
-              y2="0"
-              stroke={colors.primary}
-              strokeDasharray="10 5"
-            />
+
+      <View className="flex-1 items-center justify-center">
+        {/* grid lines */}
+        <View className="absolute w-full">
+          <Svg
+            height="1"
+            width="100%"
+            stroke={colors.primary}
+            strokeDasharray="10 5"
+          >
+            <Line x1="0" y1="0" x2="100%" y2="0" />
           </Svg>
-          <View className="absolute h-full">
-            <Svg height="100%" width="1">
-              <Line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="100%"
-                stroke={colors.primary}
-                strokeDasharray="10 5"
-              />
-            </Svg>
-          </View>
         </View>
-        <View className="flex-1 items-center justify-center">
-          <GestureDetector gesture={pan}>
-            <ShadowView
-              as={Animated.View}
-              className="relative h-[250px] w-[250px] px-7 py-9"
-              style={[
-                { shadowOffset: { height: 4, width: 4 } },
-                animatedStyles,
-              ]}
-            >
-              <Text className="font-public-sans-bold text-4xl text-primary">
-                Write blog post
-              </Text>
-            </ShadowView>
-          </GestureDetector>
+        <View className="absolute h-full">
+          <Svg
+            height="100%"
+            width="1"
+            stroke={colors.primary}
+            strokeDasharray="10 5"
+          >
+            <Line x1="0" y1="0" x2="0" y2="100%" />
+          </Svg>
         </View>
+
+        {/* card */}
+        <GestureDetector gesture={pan}>
+          <ShadowView
+            as={Animated.View}
+            className="h-[250px] w-[250px] px-7 py-9"
+            style={[{ shadowOffset: { height: 4, width: 4 } }, animatedStyles]}
+          >
+            <Text className="font-public-sans-bold text-4xl text-primary">
+              Write blog post
+            </Text>
+          </ShadowView>
+        </GestureDetector>
       </View>
     </SafeAreaView>
   );
