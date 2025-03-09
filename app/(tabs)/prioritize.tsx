@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -33,6 +34,13 @@ export default function PrioritizeScreen() {
     const dy = Math.abs(translateY.value);
     return Math.max(1 - Math.min(dx / MIN_DISTANCE, dy / MIN_DISTANCE), 0);
   });
+
+  const [priority, setPriority] = useState<string>();
+  useEffect(() => {
+    if (backgroundColor.value === "white") return;
+    console.log(backgroundColor.value);
+    setPriority(backgroundColor.value);
+  }, [backgroundColor.value]);
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     backgroundColor: colors[backgroundColor.value],
@@ -137,6 +145,36 @@ export default function PrioritizeScreen() {
                 cardAnimatedStyle,
               ]}
             >
+              <View className="absolute size-full">
+                {priority === "do" && (
+                  <View className="border-doPrimary absolute bottom-0 right-0 m-6 -rotate-12 border-2 p-1">
+                    <Text className="text-doPrimary font-public-sans-bold text-2xl uppercase">
+                      do
+                    </Text>
+                  </View>
+                )}
+                {priority === "decide" && (
+                  <View className="border-decidePrimary absolute bottom-0 left-0 m-6 rotate-12 border-2 p-1">
+                    <Text className="text-decidePrimary font-public-sans-bold text-2xl uppercase">
+                      decide
+                    </Text>
+                  </View>
+                )}
+                {priority === "delegate" && (
+                  <View className="border-delegatePrimary absolute bottom-0 right-0 m-6 -rotate-12 border-2 p-1">
+                    <Text className="text-delegatePrimary font-public-sans-bold text-2xl uppercase">
+                      delegate
+                    </Text>
+                  </View>
+                )}
+                {priority === "delete" && (
+                  <View className="border-deletePrimary absolute bottom-0 left-0 m-6 rotate-12 border-2 p-1">
+                    <Text className="text-deletePrimary font-public-sans-bold text-2xl uppercase">
+                      delete
+                    </Text>
+                  </View>
+                )}
+              </View>
               <Animated.View
                 className="absolute size-full bg-white"
                 style={cardBackgroundAnimatedStyle}

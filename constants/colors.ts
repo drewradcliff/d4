@@ -10,6 +10,11 @@ export const colors = {
   delegate: "#cce5ff",
   delete: "#ffd5d5",
 
+  doPrimary: "#a3ff86",
+  decidePrimary: "#e1e591",
+  delegatePrimary: "#95c8ff",
+  deletePrimary: "#ff9995",
+
   white: "#ffffff",
   black: "#000000",
 };
