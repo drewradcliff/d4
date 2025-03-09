@@ -74,53 +74,81 @@ export default function PrioritizeScreen() {
         </Text>
       </View>
 
-      <View className="flex-1 items-center justify-center">
-        {/* grid lines */}
-        <View className="absolute w-full">
-          <Svg
-            height="1"
-            width="100%"
-            stroke={colors.primary}
-            strokeDasharray="10 5"
-          >
-            <Line x1="0" y1="0" x2="100%" y2="0" />
-          </Svg>
+      <View className="flex-1">
+        {/* headings */}
+        <View className="absolute w-full flex-row">
+          <View className="flex-1">
+            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
+              Urgent
+            </Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
+              Not Urgent
+            </Text>
+          </View>
         </View>
         <View className="absolute h-full">
-          <Svg
-            height="100%"
-            width="1"
-            stroke={colors.primary}
-            strokeDasharray="10 5"
-          >
-            <Line x1="0" y1="0" x2="0" y2="100%" />
-          </Svg>
+          <View className="flex-1 justify-center">
+            <Text className="-ml-12 -rotate-90 overflow-visible text-center font-public-sans-bold text-xl text-placeholder">
+              Important
+            </Text>
+          </View>
+          <View className="flex-1 justify-center">
+            <Text className="-ml-12 -rotate-90 overflow-visible text-center font-public-sans-bold text-xl text-placeholder">
+              Not Important
+            </Text>
+          </View>
         </View>
 
-        {/* card */}
-        <GestureDetector gesture={pan}>
-          <ShadowView
-            as={Animated.View}
-            style={[
-              {
-                height: CARD_SIZE,
-                width: CARD_SIZE,
-                shadowOffset: { height: 4, width: 4 },
-              },
-              cardAnimatedStyle,
-            ]}
-          >
-            <Animated.View
-              className="absolute size-full bg-white"
-              style={cardBackgroundAnimatedStyle}
-            />
-            <View className="px-7 py-9">
-              <Text className="font-public-sans-bold text-4xl text-primary">
-                Write blog post
-              </Text>
-            </View>
-          </ShadowView>
-        </GestureDetector>
+        <View className="flex-1 items-center justify-center">
+          {/* grid lines */}
+          <View className="absolute w-full">
+            <Svg
+              height="1"
+              width="100%"
+              stroke={colors.primary}
+              strokeDasharray="10 5"
+            >
+              <Line x1="0" y1="0" x2="100%" y2="0" />
+            </Svg>
+          </View>
+          <View className="absolute h-full">
+            <Svg
+              height="100%"
+              width="1"
+              stroke={colors.primary}
+              strokeDasharray="10 5"
+            >
+              <Line x1="0" y1="0" x2="0" y2="100%" />
+            </Svg>
+          </View>
+
+          {/* card */}
+          <GestureDetector gesture={pan}>
+            <ShadowView
+              as={Animated.View}
+              style={[
+                {
+                  height: CARD_SIZE,
+                  width: CARD_SIZE,
+                  shadowOffset: { height: 4, width: 4 },
+                },
+                cardAnimatedStyle,
+              ]}
+            >
+              <Animated.View
+                className="absolute size-full bg-white"
+                style={cardBackgroundAnimatedStyle}
+              />
+              <View className="px-7 py-9">
+                <Text className="font-public-sans-bold text-4xl text-primary">
+                  Write blog post
+                </Text>
+              </View>
+            </ShadowView>
+          </GestureDetector>
+        </View>
       </View>
     </SafeAreaView>
   );
