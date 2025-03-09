@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { isNull } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
@@ -15,12 +15,17 @@ import { tasks } from "@/db/schema";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+  const [editingTask, setEditingTask] = useState<{
+    id: number;
+    description: string;
+  } | null>(null);
 
   const { data } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () =>
       await db.select().from(tasks).where(isNull(tasks.priority)),
   });
+
   const { mutate: addTask } = useMutation({
     mutationFn: async () => {
       if (!description.trim()) return;
@@ -31,6 +36,37 @@ export default function InboxScreen() {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
+
+  const { mutate: updateTask } = useMutation({
+    mutationFn: async ({
+      id,
+      description,
+    }: {
+      id: number;
+      description: string;
+    }) => {
+      if (!description.trim()) return;
+      await db.update(tasks).set({ description }).where(eq(tasks.id, id));
+    },
+    onSuccess: () => {
+      setEditingTask(null);
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const { mutate: deleteTask } = useMutation({
+    mutationFn: async ({ id }: { id: number }) => {
+      await db.delete(tasks).where(eq(tasks.id, id));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+
+  const handleTaskUpdate = () => {
+    if (!editingTask) return;
+    updateTask({ id: editingTask.id, description: editingTask.description });
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
@@ -69,12 +105,41 @@ export default function InboxScreen() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ gap: 16, paddingTop: 20 }}
         renderItem={({ item }) => (
-          <View className="flex-row items-center gap-3">
-            <ShadowView className="h-4 w-4" />
-            <Text className="font-public-sans-light text-lg">
-              {item.description}
-            </Text>
-          </View>
+          <Pressable
+            onLongPress={() =>
+              setEditingTask({ id: item.id, description: item.description })
+            }
+          >
+            <View className="flex-row items-center gap-3">
+              <ShadowView className="h-4 w-4" />
+              {editingTask?.id === item.id ? (
+                <View className="flex-1 flex-row gap-2">
+                  <TextInput
+                    className="flex-1 font-public-sans-light text-primary"
+                    value={editingTask.description}
+                    onChangeText={(text) =>
+                      setEditingTask({ ...editingTask, description: text })
+                    }
+                    autoFocus
+                    onBlur={handleTaskUpdate}
+                    onSubmitEditing={handleTaskUpdate}
+                  />
+                  <Pressable
+                    onPress={() => {
+                      deleteTask({ id: editingTask.id });
+                      setEditingTask(null);
+                    }}
+                  >
+                    <Feather name="x" size={16} color={colors.primary} />
+                  </Pressable>
+                </View>
+              ) : (
+                <Text className="font-public-sans-light text-primary">
+                  {item.description}
+                </Text>
+              )}
+            </View>
+          </Pressable>
         )}
       />
     </SafeAreaView>
