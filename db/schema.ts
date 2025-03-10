@@ -16,3 +16,5 @@ export const tasks = sqliteTable(
   },
   (table) => [index("priority_idx").on(table.priority)],
 );
+
+export type Task = typeof tasks.$inferSelect;
