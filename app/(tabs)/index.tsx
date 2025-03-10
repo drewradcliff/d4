@@ -158,10 +158,11 @@ function TaskItem({ item }: { item: Task }) {
                 if (nativeEvent.key === "Enter") {
                   if (!description.trim()) deleteTask();
                   updateTask({ id: item.id, description });
-                }
-                if (nativeEvent.key === "Backspace") {
-                  if (!description.trim()) deleteTask();
-                }
+                } else if (
+                  nativeEvent.key === "Backspace" &&
+                  !description.trim()
+                )
+                  deleteTask();
               }}
             />
             <Pressable onPress={() => deleteTask()}>
