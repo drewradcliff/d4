@@ -94,13 +94,13 @@ export default function PrioritizeScreen() {
           </View>
         </View>
         <View className="absolute h-full">
-          <View className="flex-1 justify-center">
-            <Text className="-ml-12 -rotate-90 overflow-visible text-center font-public-sans-bold text-xl text-placeholder">
+          <View className="-ml-12 flex-1 -rotate-90 justify-center">
+            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
               Important
             </Text>
           </View>
-          <View className="flex-1 justify-center">
-            <Text className="-ml-12 -rotate-90 overflow-visible text-center font-public-sans-bold text-xl text-placeholder">
+          <View className="-ml-12 flex-1 -rotate-90 justify-center">
+            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
               Not Important
             </Text>
           </View>
