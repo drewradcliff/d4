@@ -11,7 +11,7 @@ import { Pressable, Text, TextProps, View } from "react-native";
 
 import { ShadowView } from "@/components/shadow-view";
 import { TabBackgroundSvg } from "@/components/tab-background-svg";
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 
 export default function TabLayout() {
   return (
@@ -20,7 +20,7 @@ export default function TabLayout() {
       <TabList asChild>
         <ShadowView
           style={{ shadowOffset: { width: 2, height: 2 } }}
-          className="mx-3 px-10 py-6"
+          className="mx-3 rounded-full px-10 py-6"
         >
           <TabTrigger name="index" href="/" asChild>
             <TabButton icon="inbox">Inbox</TabButton>
