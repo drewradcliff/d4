@@ -4,11 +4,12 @@ import { View, ViewProps } from "react-native";
 
 import { colors } from "@/constants/colors";
 
-export const ShadowView = forwardRef<
-  View,
-  ViewProps & { as?: React.ElementType }
->(({ as: Component = View, className, style, ...props }, ref) => {
-  return (
+export type ShadowViewProps = ViewProps & {
+  as?: React.ElementType;
+};
+
+export const ShadowView = forwardRef<View, ShadowViewProps>(
+  ({ as: Component = View, className, style, ...props }, ref) => (
     <Component
       className={clsx("border border-primary bg-background", className)}
       ref={ref}
@@ -26,7 +27,7 @@ export const ShadowView = forwardRef<
       ]}
       {...props}
     />
-  );
-});
+  ),
+);
 
 ShadowView.displayName = "ShadowView";
