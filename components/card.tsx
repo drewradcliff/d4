@@ -20,9 +20,13 @@ import { tasks } from "@/db/schema";
 const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
 
-export type CardProps = CardBaseProps & { data: typeof tasks.$inferSelect };
-
-export function Card({ data, style, ...props }: CardProps) {
+export function Card({
+  data,
+  style,
+  ...props
+}: React.ComponentProps<typeof CardBase> & {
+  data: typeof tasks.$inferSelect;
+}) {
   const [quadrant, setQuadrant] = useState<typeof data.priority>(null);
 
   const { mutate: updateTask } = useMutation({
@@ -131,9 +135,10 @@ export function Card({ data, style, ...props }: CardProps) {
   );
 }
 
-export type CardBaseProps = React.ComponentProps<typeof ShadowView>;
-
-export function CardBase({ style, ...props }: CardBaseProps) {
+export function CardBase({
+  style,
+  ...props
+}: React.ComponentProps<typeof ShadowView>) {
   return (
     <ShadowView
       style={[
@@ -149,9 +154,10 @@ export function CardBase({ style, ...props }: CardBaseProps) {
   );
 }
 
-export type CardTextProps = React.ComponentProps<typeof Text>;
-
-export function CardText({ className, ...props }: CardTextProps) {
+export function CardText({
+  className,
+  ...props
+}: React.ComponentProps<typeof Text>) {
   return (
     <View className="px-7 py-9">
       <Text
