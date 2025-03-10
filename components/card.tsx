@@ -93,29 +93,29 @@ export function Card({ data, style, ...props }: CardProps) {
       >
         <View className="absolute size-full">
           {quadrant === "do" && (
-            <View className="border-doPrimary absolute bottom-0 right-0 m-6 -rotate-12 border-2 p-1">
-              <Text className="text-doPrimary font-public-sans-bold text-2xl uppercase">
+            <View className="absolute bottom-0 right-0 m-6 -rotate-12 border-2 border-doPrimary p-1">
+              <Text className="font-public-sans-bold text-2xl uppercase text-doPrimary">
                 do
               </Text>
             </View>
           )}
           {quadrant === "decide" && (
-            <View className="border-decidePrimary absolute bottom-0 left-0 m-6 rotate-12 border-2 p-1">
-              <Text className="text-decidePrimary font-public-sans-bold text-2xl uppercase">
+            <View className="absolute bottom-0 left-0 m-6 rotate-12 border-2 border-decidePrimary p-1">
+              <Text className="font-public-sans-bold text-2xl uppercase text-decidePrimary">
                 decide
               </Text>
             </View>
           )}
           {quadrant === "delegate" && (
-            <View className="border-delegatePrimary absolute bottom-0 right-0 m-6 -rotate-12 border-2 p-1">
-              <Text className="text-delegatePrimary font-public-sans-bold text-2xl uppercase">
+            <View className="absolute bottom-0 right-0 m-6 -rotate-12 border-2 border-delegatePrimary p-1">
+              <Text className="font-public-sans-bold text-2xl uppercase text-delegatePrimary">
                 delegate
               </Text>
             </View>
           )}
           {quadrant === "delete" && (
-            <View className="border-deletePrimary absolute bottom-0 left-0 m-6 rotate-12 border-2 p-1">
-              <Text className="text-deletePrimary font-public-sans-bold text-2xl uppercase">
+            <View className="absolute bottom-0 left-0 m-6 rotate-12 border-2 border-deletePrimary p-1">
+              <Text className="font-public-sans-bold text-2xl uppercase text-deletePrimary">
                 delete
               </Text>
             </View>
