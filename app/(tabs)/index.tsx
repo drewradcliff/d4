@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { queryClient } from "../_layout";
 
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/Colors";
+import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 
@@ -83,7 +83,7 @@ export default function InboxScreen() {
         <Pressable onPress={() => addTask()}>
           {({ pressed }) => (
             <ShadowView
-              className="p-3"
+              className="rounded-full p-3"
               style={{
                 shadowOffset: {
                   height: pressed ? 0 : 2,
@@ -111,7 +111,7 @@ export default function InboxScreen() {
             }
           >
             <View className="flex-row items-center gap-3">
-              <ShadowView className="h-4 w-4" />
+              <ShadowView className="h-4 w-4 rounded-full" />
               {editingTask?.id === item.id ? (
                 <View className="flex-1 flex-row gap-2">
                   <TextInput
