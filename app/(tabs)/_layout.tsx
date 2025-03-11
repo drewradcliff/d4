@@ -10,7 +10,7 @@ import { ComponentProps, forwardRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Paper } from "@/components/shadow-view";
+import { Paper } from "@/components/paper";
 import { TabBackgroundSvg } from "@/components/tab-background-svg";
 import { theme } from "@/styles/theme";
 

@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { queryClient } from "@/app/_layout";
-import { Paper } from "@/components/shadow-view";
+import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";

@@ -7,7 +7,7 @@ import { Pressable, Text, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { queryClient } from "@/app/_layout";
-import { Paper } from "@/components/shadow-view";
+import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";

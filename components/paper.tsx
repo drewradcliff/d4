@@ -10,23 +10,20 @@ type PaperProps = ViewProps & {
 };
 
 export const Paper = forwardRef<View, PaperProps>(
-  (
-    { as: Component = View, className, elevation = 1, style, ...props },
-    ref,
-  ) => (
+  ({ as: Component = View, elevation = 1, ...props }, ref) => (
     <Component
-      className={clsx("border border-primary bg-background", className)}
+      {...props}
+      className={clsx("border border-primary bg-background", props.className)}
       ref={ref}
       style={[
         {
-          shadowOffset: { height: elevation, width: elevation },
           shadowColor: theme.colors.primary,
+          shadowOffset: { height: elevation, width: elevation },
           shadowOpacity: 1,
           shadowRadius: 0,
         },
-        style,
+        props.style,
       ]}
-      {...props}
     />
   ),
 );
