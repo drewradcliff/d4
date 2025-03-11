@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { queryClient } from "../_layout";
 
-import { ShadowView } from "@/components/shadow-view";
+import { Paper } from "@/components/shadow-view";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
@@ -48,13 +48,10 @@ export default function InboxScreen() {
         />
         <Pressable onPress={() => addTask()}>
           {({ pressed }) => (
-            <ShadowView
+            <Paper
               className="rounded-full p-3"
+              elevation={pressed ? 0 : 2}
               style={{
-                shadowOffset: {
-                  height: pressed ? 0 : 2,
-                  width: pressed ? 0 : 2,
-                },
                 transform: [
                   { translateX: pressed ? 2 : 0 },
                   { translateY: pressed ? 2 : 0 },
@@ -62,7 +59,7 @@ export default function InboxScreen() {
               }}
             >
               <Feather name="plus" size={16} color={theme.colors.primary} />
-            </ShadowView>
+            </Paper>
           )}
         </Pressable>
       </View>
@@ -135,11 +132,11 @@ function TaskItem({ item }: { item: Task }) {
             });
           }}
         >
-          <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
+          <Paper className="h-4 w-4 items-center justify-center rounded-full">
             {item.completedAt && (
               <Feather name="check" size={12} color={theme.colors.primary} />
             )}
-          </ShadowView>
+          </Paper>
         </Pressable>
         {isEditing ? (
           <View className="flex-1 flex-row gap-2 pr-3">

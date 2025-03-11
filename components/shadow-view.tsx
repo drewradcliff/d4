@@ -4,24 +4,31 @@ import { View, ViewProps } from "react-native";
 
 import { theme } from "@/styles/theme";
 
-export const ShadowView = forwardRef<
-  View,
-  ViewProps & { as?: React.ElementType }
->(({ as: Component = View, className, style, ...props }, ref) => (
-  <Component
-    className={clsx("border border-primary bg-background", className)}
-    ref={ref}
-    style={[
-      {
-        shadowOffset: { height: 1, width: 1 },
-        shadowColor: theme.colors.primary,
-        shadowOpacity: 1,
-        shadowRadius: 0,
-      },
-      style,
-    ]}
-    {...props}
-  />
-));
+type PaperProps = ViewProps & {
+  as?: React.ElementType;
+  elevation?: number;
+};
 
-ShadowView.displayName = "ShadowView";
+export const Paper = forwardRef<View, PaperProps>(
+  (
+    { as: Component = View, className, elevation = 1, style, ...props },
+    ref,
+  ) => (
+    <Component
+      className={clsx("border border-primary bg-background", className)}
+      ref={ref}
+      style={[
+        {
+          shadowOffset: { height: elevation, width: elevation },
+          shadowColor: theme.colors.primary,
+          shadowOpacity: 1,
+          shadowRadius: 0,
+        },
+        style,
+      ]}
+      {...props}
+    />
+  ),
+);
+
+Paper.displayName = "Paper";

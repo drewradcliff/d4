@@ -10,7 +10,7 @@ import { ComponentProps, forwardRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ShadowView } from "@/components/shadow-view";
+import { Paper } from "@/components/shadow-view";
 import { TabBackgroundSvg } from "@/components/tab-background-svg";
 import { theme } from "@/styles/theme";
 
@@ -21,12 +21,10 @@ export default function TabLayout() {
     <Tabs>
       <TabSlot />
       <TabList asChild>
-        <ShadowView
-          className="mx-3 rounded-full bg-background px-10 py-6"
-          style={{
-            marginBottom: insets.bottom,
-            shadowOffset: { width: 2, height: 2 },
-          }}
+        <Paper
+          className="mx-3 rounded-full px-10 py-6"
+          elevation={2}
+          style={{ marginBottom: insets.bottom }}
         >
           <TabTrigger name="index" href="/" asChild>
             <TabButton icon="inbox">Inbox</TabButton>
@@ -37,7 +35,7 @@ export default function TabLayout() {
           <TabTrigger name="tasks" href="/tasks" asChild>
             <TabButton icon="list">Tasks</TabButton>
           </TabTrigger>
-        </ShadowView>
+        </Paper>
       </TabList>
     </Tabs>
   );

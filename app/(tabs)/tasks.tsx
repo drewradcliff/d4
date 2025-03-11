@@ -7,7 +7,7 @@ import { Pressable, Text, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { queryClient } from "@/app/_layout";
-import { ShadowView } from "@/components/shadow-view";
+import { Paper } from "@/components/shadow-view";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
@@ -54,7 +54,7 @@ export default function TasksScreen() {
         {Array.from(tabs.entries()).map(([tab, className]) => (
           <Pressable key={tab} onPress={() => setSelected(tab)}>
             {({ pressed }) => (
-              <ShadowView
+              <Paper
                 className={clsx(
                   "items-center justify-center rounded-full p-2 px-3",
                   selected === tab && className,
@@ -78,7 +78,7 @@ export default function TasksScreen() {
                 >
                   {tab.toUpperCase()}
                 </Text>
-              </ShadowView>
+              </Paper>
             )}
           </Pressable>
         ))}
@@ -100,7 +100,7 @@ export default function TasksScreen() {
                   });
                 }}
               >
-                <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
+                <Paper className="h-4 w-4 items-center justify-center rounded-full">
                   {item.completedAt && (
                     <Feather
                       name="check"
@@ -108,7 +108,7 @@ export default function TasksScreen() {
                       color={theme.colors.primary}
                     />
                   )}
-                </ShadowView>
+                </Paper>
               </Pressable>
               <Text
                 className={clsx(

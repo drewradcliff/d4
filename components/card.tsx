@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { queryClient } from "@/app/_layout";
-import { ShadowView } from "@/components/shadow-view";
+import { Paper } from "@/components/shadow-view";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
@@ -138,17 +138,11 @@ export function Card({
 export function CardBase({
   style,
   ...props
-}: React.ComponentProps<typeof ShadowView>) {
+}: React.ComponentProps<typeof Paper>) {
   return (
-    <ShadowView
-      style={[
-        {
-          height: CARD_SIZE,
-          width: CARD_SIZE,
-          shadowOffset: { height: 4, width: 4 },
-        },
-        style,
-      ]}
+    <Paper
+      elevation={4}
+      style={[{ height: CARD_SIZE, width: CARD_SIZE }, style]}
       {...props}
     />
   );
