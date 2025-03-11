@@ -10,8 +10,8 @@ import { ComponentProps, forwardRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import TabBackground from "@/assets/tab-background.svg";
 import { Paper } from "@/components/paper";
-import { TabBackgroundSvg } from "@/components/tab-background-svg";
 import { theme } from "@/styles/theme";
 
 export default function TabLayout() {
@@ -48,7 +48,7 @@ const TabButton = forwardRef<
   <Pressable className="flex-row items-center gap-2" ref={ref} {...props}>
     {isFocused && (
       <View className="absolute -left-8">
-        <TabBackgroundSvg />
+        <TabBackground />
       </View>
     )}
     <Feather color={theme.colors.primary} name={icon} size={18} />
