@@ -1,6 +1,6 @@
-import { defineConfig } from "drizzle-kit";
+const { defineConfig } = require("drizzle-kit");
 
-export default defineConfig({
+module.exports = defineConfig({
   dialect: "sqlite",
   driver: "expo",
   schema: "./db/schema.ts",
