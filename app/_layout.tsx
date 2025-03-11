@@ -20,7 +20,7 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { db } from "@/db/client";
-import migrations from "@/drizzle/migrations";
+import migrations from "@/db/drizzle/migrations";
 import { theme } from "@/styles/theme";
 
 import "react-native-reanimated";
