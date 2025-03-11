@@ -77,6 +77,7 @@ export default function RootLayout() {
   }, [isLoading, error]);
 
   if (isLoading) return null;
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={LightTheme}>

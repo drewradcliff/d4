@@ -14,7 +14,7 @@ import TabBackground from "@/assets/tab-background.svg";
 import { Paper } from "@/components/paper";
 import { theme } from "@/styles/theme";
 
-export default function TabLayout() {
+export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
