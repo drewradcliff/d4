@@ -11,7 +11,7 @@ import { Pressable, Text, TextProps, View } from "react-native";
 
 import { ShadowView } from "@/components/shadow-view";
 import { TabBackgroundSvg } from "@/components/tab-background-svg";
-import { colors } from "@/constants/colors";
+import { theme } from "@/styles/theme";
 
 export default function TabLayout() {
   return (
@@ -67,7 +67,7 @@ const TabButton = forwardRef(
             <TabBackgroundSvg />
           </View>
         )}
-        {icon && <Feather color={colors.primary} name={icon} size={18} />}
+        {icon && <Feather color={theme.colors.primary} name={icon} size={18} />}
         <Text className="font-public-sans-regular text-secondary">
           {children}
         </Text>

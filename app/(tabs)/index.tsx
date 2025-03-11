@@ -9,9 +9,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { queryClient } from "../_layout";
 
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
@@ -40,7 +40,7 @@ export default function InboxScreen() {
         <TextInput
           className="flex-1 border border-primary bg-white p-3 font-public-sans-light text-primary"
           placeholder="Add task..."
-          placeholderTextColor={colors.secondary}
+          placeholderTextColor={theme.colors.secondary}
           value={description}
           onChangeText={setDescription}
           onSubmitEditing={() => addTask()}
@@ -61,7 +61,7 @@ export default function InboxScreen() {
                 ],
               }}
             >
-              <Feather name="plus" size={16} color={colors.primary} />
+              <Feather name="plus" size={16} color={theme.colors.primary} />
             </ShadowView>
           )}
         </Pressable>
@@ -137,7 +137,7 @@ function TaskItem({ item }: { item: Task }) {
         >
           <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
             {item.completedAt && (
-              <Feather name="check" size={12} color={colors.primary} />
+              <Feather name="check" size={12} color={theme.colors.primary} />
             )}
           </ShadowView>
         </Pressable>
@@ -164,7 +164,7 @@ function TaskItem({ item }: { item: Task }) {
               }}
             />
             <Pressable onPress={() => deleteTask()}>
-              <Feather name="x" size={18} color={colors.primary} />
+              <Feather name="x" size={18} color={theme.colors.primary} />
             </Pressable>
           </View>
         ) : (

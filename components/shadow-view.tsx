@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { forwardRef } from "react";
 import { View, ViewProps } from "react-native";
 
-import { colors } from "@/constants/colors";
+import { theme } from "@/styles/theme";
 
 export const ShadowView = forwardRef<
   View,
@@ -14,7 +14,7 @@ export const ShadowView = forwardRef<
     style={[
       {
         shadowOffset: { height: 1, width: 1 },
-        shadowColor: colors.primary,
+        shadowColor: theme.colors.primary,
         shadowOpacity: 1,
         shadowRadius: 0,
       },

@@ -8,9 +8,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { queryClient } from "@/app/_layout";
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 const tabs = new Map([
   ["do", "bg-do"],
@@ -102,7 +102,11 @@ export default function TasksScreen() {
               >
                 <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
                   {item.completedAt && (
-                    <Feather name="check" size={12} color={colors.primary} />
+                    <Feather
+                      name="check"
+                      size={12}
+                      color={theme.colors.primary}
+                    />
                   )}
                 </ShadowView>
               </Pressable>

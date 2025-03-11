@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
 import { Card, CardBase, CardText } from "@/components/card";
-import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 const MAX_ITEMS = 3;
 
@@ -62,7 +62,7 @@ export default function PrioritizeScreen() {
             <Svg
               height="1"
               width="100%"
-              stroke={colors.primary}
+              stroke={theme.colors.primary}
               strokeDasharray="10 5"
             >
               <Line x1="0" y1="0" x2="100%" y2="0" />
@@ -72,7 +72,7 @@ export default function PrioritizeScreen() {
             <Svg
               height="100%"
               width="1"
-              stroke={colors.primary}
+              stroke={theme.colors.primary}
               strokeDasharray="10 5"
             >
               <Line x1="0" y1="0" x2="0" y2="100%" />

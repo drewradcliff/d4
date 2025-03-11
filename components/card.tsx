@@ -13,9 +13,9 @@ import Animated, {
 
 import { queryClient } from "@/app/_layout";
 import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
@@ -56,7 +56,7 @@ export function Card({
   });
 
   const cardAnimatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: colors[backgroundColor.value],
+    backgroundColor: theme.colors[backgroundColor.value],
     transform: [
       { translateX: translateX.value },
       { translateY: translateY.value },

@@ -19,18 +19,17 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { colors } from "@/constants/colors";
-import "react-native-reanimated";
-import "@/styles/global.css";
 import { db } from "@/db/client";
 import migrations from "@/drizzle/migrations";
+import { theme } from "@/styles/theme";
+
+import "react-native-reanimated";
+import "@/styles/global.css";
 
 export const queryClient = new QueryClient();
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+// Catch any errors thrown by the Layout component.
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -44,8 +43,8 @@ const LightTheme: Theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    card: colors.background,
-    text: colors.primary,
+    card: theme.colors.background,
+    text: theme.colors.primary,
   },
 };
 
