@@ -2,7 +2,6 @@ import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { eq, isNull } from "drizzle-orm";
-import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,7 +35,6 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
-      <StatusBar style="dark" />
       <Text className="font-public-sans-bold text-4xl text-primary">Inbox</Text>
       <View className="flex-row items-center gap-2 pt-5">
         <TextInput
