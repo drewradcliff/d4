@@ -16,7 +16,6 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
-nativewind-env.d.ts
 
 # metro
 .metro-health-check*
