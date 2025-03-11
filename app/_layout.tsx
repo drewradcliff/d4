@@ -1,4 +1,3 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   PublicSans_200ExtraLight,
   PublicSans_300Light,
@@ -28,15 +27,13 @@ import "@/styles/global.css";
 
 export const queryClient = new QueryClient();
 
-// Catch any errors thrown by the Layout component.
-export { ErrorBoundary } from "expo-router";
-
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+export { ErrorBoundary } from "expo-router";
+
 SplashScreen.preventAutoHideAsync();
 
 const LightTheme: Theme = {
@@ -49,12 +46,11 @@ const LightTheme: Theme = {
 };
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const [fontsLoaded, fontsError] = useFonts({
     PublicSans_200ExtraLight,
     PublicSans_300Light,
     PublicSans_400Regular,
     PublicSans_700Bold,
-    ...FontAwesome.font,
   });
 
   const migrationsQuery = useQuery(
@@ -71,41 +67,26 @@ export default function RootLayout() {
     queryClient,
   );
 
-  const isLoading = !loaded || migrationsQuery.isLoading;
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+  const error = fontsError || migrationsQuery.error;
+  const isLoading = !fontsLoaded || migrationsQuery.isLoading;
 
   useEffect(() => {
-    if (!isLoading) {
-      SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+    if (error) throw error; // handled by error boundary
+    if (isLoading) return;
+    SplashScreen.hideAsync();
+  }, [isLoading, error]);
 
-  if (migrationsQuery.isError) {
-    alert(`Failed to migrate database\n${migrationsQuery.error.message}`);
-  }
-
-  if (isLoading) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
+  if (isLoading) return null;
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView>
-        <ThemeProvider value={LightTheme}>
-          <StatusBar style="dark" />
+      <ThemeProvider value={LightTheme}>
+        <StatusBar style="dark" />
+        <GestureHandlerRootView>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
-        </ThemeProvider>
-      </GestureHandlerRootView>
+        </GestureHandlerRootView>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
