@@ -5,12 +5,7 @@ import {
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
 import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
-import {
-  useQuery,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import { migrate } from "drizzle-orm/expo-sqlite/migrator";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -24,8 +19,6 @@ import { theme } from "@/styles/theme";
 
 import "react-native-reanimated";
 import "@/styles/global.css";
-
-export const queryClient = new QueryClient();
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -46,6 +39,7 @@ const LightTheme: Theme = {
 };
 
 export default function RootLayout() {
+  const migrationsResult = useMigrations(db, migrations);
   const [fontsLoaded, fontsError] = useFonts({
     PublicSans_200ExtraLight,
     PublicSans_300Light,
@@ -53,22 +47,8 @@ export default function RootLayout() {
     PublicSans_700Bold,
   });
 
-  const migrationsQuery = useQuery(
-    {
-      queryKey: ["migrations"],
-      queryFn: async () => {
-        await migrate(db, migrations);
-        return true;
-      },
-      gcTime: 0, // forget result after unmount
-      staleTime: Infinity, // don't refetch automatically
-      retry: false, // fail fast
-    },
-    queryClient,
-  );
-
-  const error = fontsError || migrationsQuery.error;
-  const isLoading = !fontsLoaded || migrationsQuery.isLoading;
+  const error = migrationsResult.error || fontsError;
+  const isLoading = !migrationsResult.success || !fontsLoaded;
 
   useEffect(() => {
     if (error) throw error; // handled by error boundary
@@ -79,15 +59,13 @@ export default function RootLayout() {
   if (isLoading) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={LightTheme}>
-        <StatusBar style="dark" />
-        <GestureHandlerRootView>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </GestureHandlerRootView>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider value={LightTheme}>
+      <StatusBar style="dark" />
+      <GestureHandlerRootView>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
 }

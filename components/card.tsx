@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
@@ -11,10 +10,9 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 
-import { queryClient } from "@/app/_layout";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
-import { tasks } from "@/db/schema";
+import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const CARD_SIZE = 250;
@@ -24,18 +22,12 @@ export function Card({
   data,
   style,
   ...props
-}: React.ComponentProps<typeof CardBase> & {
-  data: typeof tasks.$inferSelect;
-}) {
+}: React.ComponentProps<typeof CardBase> & { data: Task }) {
   const [quadrant, setQuadrant] = useState<typeof data.priority>(null);
 
-  const { mutate: updateTask } = useMutation({
-    mutationFn: (priority: typeof data.priority) =>
-      db.update(tasks).set({ priority }).where(eq(tasks.id, data.id)),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    },
-  });
+  const updateTask = async (priority: Task["priority"]) => {
+    await db.update(tasks).set({ priority }).where(eq(tasks.id, data.id));
+  };
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);

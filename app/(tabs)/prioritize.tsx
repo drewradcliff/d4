@@ -1,21 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { isNull } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
 import { Card, CardBase, CardText } from "@/components/card";
 import { db } from "@/db/client";
-import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const MAX_ITEMS = 3;
 
 export default function PrioritizeScreen() {
-  const { data } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => db.select().from(tasks).where(isNull(tasks.priority)),
-  });
+  const { data } = useLiveQuery(
+    db.query.tasks.findMany({
+      where: (tasks, { isNull }) => isNull(tasks.priority),
+    }),
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -80,7 +79,7 @@ export default function PrioritizeScreen() {
           </View>
 
           {data
-            ?.toReversed()
+            .toReversed()
             .slice(0, MAX_ITEMS + 1)
             .toReversed()
             .map((item, index) => {
