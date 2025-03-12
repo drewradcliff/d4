@@ -33,7 +33,7 @@ const LightTheme: Theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    card: theme.colors.background,
+    card: theme.colors.background.DEFAULT,
     text: theme.colors.primary,
   },
 };

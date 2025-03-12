@@ -100,7 +100,7 @@ function TaskItem({ item }: { item: Task }) {
             )}
           </Paper>
         </Pressable>
-        {isEditing ? (
+        {isEditing ?
           <View className="flex-1 flex-row gap-2 pr-3">
             <TextInput
               className="flex-1 font-public-sans-light text-primary"
@@ -120,8 +120,7 @@ function TaskItem({ item }: { item: Task }) {
               <Feather name="x" size={18} color={theme.colors.primary} />
             </Pressable>
           </View>
-        ) : (
-          <Text
+        : <Text
             className={clsx(
               "font-public-sans-light text-primary",
               item.completedAt && "line-through",
@@ -129,7 +128,7 @@ function TaskItem({ item }: { item: Task }) {
           >
             {description}
           </Text>
-        )}
+        }
       </View>
     </Pressable>
   );

@@ -19,42 +19,31 @@ const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
 
 export function Card({
-  data,
+  task,
   style,
   ...props
-}: React.ComponentProps<typeof CardBase> & { data: Task }) {
-  const [quadrant, setQuadrant] = useState<typeof data.priority>(null);
-
-  const updateTask = async (priority: Task["priority"]) => {
-    await db.update(tasks).set({ priority }).where(eq(tasks.id, data.id));
-  };
+}: React.ComponentProps<typeof CardBase> & { task: Task }) {
+  const [quadrant, setQuadrant] = useState<Task["priority"]>(null);
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
 
-  const backgroundColor = useDerivedValue(() => {
-    if (translateX.value < 0 && translateY.value < 0) return "do";
-    if (translateX.value > 0 && translateY.value < 0) return "decide";
-    if (translateX.value < 0 && translateY.value > 0) return "delegate";
-    if (translateX.value > 0 && translateY.value > 0) return "delete";
-    return "white";
-  });
   const opacity = useDerivedValue(() => {
-    if (translateX.value === 0 || translateY.value === 0) return 1;
+    if (translateX.value === 0 || translateY.value === 0) return 0;
 
     const dx = Math.abs(translateX.value);
     const dy = Math.abs(translateY.value);
-    return Math.max(1 - Math.min(dx / MIN_DISTANCE, dy / MIN_DISTANCE), 0);
+    return Math.min(Math.min(dx / MIN_DISTANCE, dy / MIN_DISTANCE), 1);
   });
 
-  const cardAnimatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: theme.colors[backgroundColor.value],
+  const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: translateX.value },
       { translateY: translateY.value },
     ],
   }));
-  const cardBackgroundAnimatedStyle = useAnimatedStyle(() => ({
+  const backgroundAnimatedStyle = useAnimatedStyle(() => ({
+    backgroundColor: theme.colors.background[quadrant || "white"],
     opacity: opacity.value,
   }));
 
@@ -63,15 +52,21 @@ export function Card({
       translateX.value = event.translationX;
       translateY.value = event.translationY;
 
-      if (backgroundColor.value === "white") return;
-      setQuadrant(backgroundColor.value);
+      setQuadrant(
+        translateX.value < 0 && translateY.value < 0 ? "do"
+        : translateX.value > 0 && translateY.value < 0 ? "decide"
+        : translateX.value < 0 && translateY.value > 0 ? "delegate"
+        : translateX.value > 0 && translateY.value > 0 ? "delete"
+        : null,
+      );
     })
-    .onEnd(() => {
-      const priority = opacity.value === 0 ? quadrant : null;
-
-      if (priority) {
+    .onEnd(async () => {
+      if (opacity.value === 1) {
         // transition task
-        updateTask(priority);
+        await db
+          .update(tasks)
+          .set({ priority: quadrant })
+          .where(eq(tasks.id, task.id));
       } else {
         // smoothly translate to origin
         translateX.value = withTiming(0, { duration: 100 });
@@ -80,59 +75,44 @@ export function Card({
     })
     .runOnJS(true);
 
+  const foregroundColor = quadrant ? theme.colors.foreground[quadrant] : "none";
+  const isLeft = quadrant === "do" || quadrant === "delegate";
+
   return (
     <GestureDetector gesture={pan}>
-      <CardBase
-        as={Animated.View}
-        style={[style, cardAnimatedStyle]}
-        {...props}
-      >
-        <View className="absolute size-full">
-          {quadrant === "do" && (
-            <View className="absolute bottom-0 right-0 m-6 -rotate-12 border-2 border-doPrimary p-1">
-              <Text className="font-public-sans-bold text-2xl uppercase text-doPrimary">
-                do
-              </Text>
-            </View>
-          )}
-          {quadrant === "decide" && (
-            <View className="absolute bottom-0 left-0 m-6 rotate-12 border-2 border-decidePrimary p-1">
-              <Text className="font-public-sans-bold text-2xl uppercase text-decidePrimary">
-                decide
-              </Text>
-            </View>
-          )}
-          {quadrant === "delegate" && (
-            <View className="absolute bottom-0 right-0 m-6 -rotate-12 border-2 border-delegatePrimary p-1">
-              <Text className="font-public-sans-bold text-2xl uppercase text-delegatePrimary">
-                delegate
-              </Text>
-            </View>
-          )}
-          {quadrant === "delete" && (
-            <View className="absolute bottom-0 left-0 m-6 rotate-12 border-2 border-deletePrimary p-1">
-              <Text className="font-public-sans-bold text-2xl uppercase text-deletePrimary">
-                delete
-              </Text>
-            </View>
-          )}
-        </View>
+      <CardBase as={Animated.View} style={[style, animatedStyle]} {...props}>
         <Animated.View
-          className="absolute size-full bg-white"
-          style={cardBackgroundAnimatedStyle}
-        />
-        <CardText>{data.description}</CardText>
+          className="absolute size-full"
+          style={backgroundAnimatedStyle}
+        >
+          <View
+            className={clsx(
+              "absolute bottom-0 m-6",
+              isLeft ? "right-0 -rotate-12" : "left-0 rotate-12",
+            )}
+          >
+            <Text
+              className="border-2 p-1 font-public-sans-bold text-2xl uppercase"
+              style={{ color: foregroundColor, borderColor: foregroundColor }}
+            >
+              {quadrant}
+            </Text>
+          </View>
+        </Animated.View>
+        <CardText>{task.description}</CardText>
       </CardBase>
     </GestureDetector>
   );
 }
 
 export function CardBase({
+  className,
   style,
   ...props
 }: React.ComponentProps<typeof Paper>) {
   return (
     <Paper
+      className={clsx("bg-white", className)}
       elevation={4}
       style={[{ height: CARD_SIZE, width: CARD_SIZE }, style]}
       {...props}

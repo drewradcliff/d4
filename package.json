@@ -53,6 +53,7 @@
     ]
   },
   "prettier": {
+    "experimentalTernaries": true,
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]

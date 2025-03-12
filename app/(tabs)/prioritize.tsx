@@ -92,13 +92,11 @@ export default function PrioritizeScreen() {
                   className="absolute"
                   style={{ paddingTop: offset, paddingLeft: offset }}
                 >
-                  {!enabled ? (
-                    <CardBase className="bg-white">
+                  {!enabled ?
+                    <CardBase>
                       <CardText>{item.description}</CardText>
                     </CardBase>
-                  ) : (
-                    <Card data={item} />
-                  )}
+                  : <Card task={item} />}
                 </View>
               );
             })}
