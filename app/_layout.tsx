@@ -1,4 +1,3 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   PublicSans_200ExtraLight,
   PublicSans_300Light,
@@ -6,107 +5,67 @@ import {
   PublicSans_700Bold,
 } from "@expo-google-fonts/public-sans";
 import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
-import {
-  useQuery,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import { migrate } from "drizzle-orm/expo-sqlite/migrator";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { colors } from "@/constants/colors";
+import { db } from "@/db/client";
+import migrations from "@/db/drizzle/migrations";
+import { theme } from "@/styles/theme";
+
 import "react-native-reanimated";
 import "@/styles/global.css";
-import { db } from "@/db/client";
-import migrations from "@/drizzle/migrations";
-
-export const queryClient = new QueryClient();
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+export { ErrorBoundary } from "expo-router";
+
 SplashScreen.preventAutoHideAsync();
 
 const LightTheme: Theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    card: colors.background,
-    text: colors.primary,
+    card: theme.colors.background.DEFAULT,
+    text: theme.colors.primary,
   },
 };
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
+  const migrationsResult = useMigrations(db, migrations);
+  const [fontsLoaded, fontsError] = useFonts({
     PublicSans_200ExtraLight,
     PublicSans_300Light,
     PublicSans_400Regular,
     PublicSans_700Bold,
-    ...FontAwesome.font,
   });
 
-  const migrationsQuery = useQuery(
-    {
-      queryKey: ["migrations"],
-      queryFn: async () => {
-        await migrate(db, migrations);
-        return true;
-      },
-      gcTime: 0, // forget result after unmount
-      staleTime: Infinity, // don't refetch automatically
-      retry: false, // fail fast
-    },
-    queryClient,
-  );
-
-  const isLoading = !loaded || migrationsQuery.isLoading;
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+  const error = migrationsResult.error || fontsError;
+  const isLoading = !migrationsResult.success || !fontsLoaded;
 
   useEffect(() => {
-    if (!isLoading) {
-      SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
+    if (error) throw error; // handled by error boundary
+    if (isLoading) return;
+    SplashScreen.hideAsync();
+  }, [isLoading, error]);
 
-  if (migrationsQuery.isError) {
-    alert(`Failed to migrate database\n${migrationsQuery.error.message}`);
-  }
+  if (isLoading) return null;
 
-  if (isLoading) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <ThemeProvider value={LightTheme}>
+      <SystemBars style="dark" />
       <GestureHandlerRootView>
-        <ThemeProvider value={LightTheme}>
-          <StatusBar style="dark" />
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </ThemeProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
       </GestureHandlerRootView>
-    </QueryClientProvider>
+    </ThemeProvider>
   );
 }

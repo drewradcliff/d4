@@ -1,17 +1,15 @@
 import { Feather } from "@expo/vector-icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
-import { StatusBar } from "expo-status-bar";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
 import { Pressable, Text, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { queryClient } from "@/app/_layout";
-import { ShadowView } from "@/components/shadow-view";
-import { colors } from "@/constants/colors";
+import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
-import { tasks } from "@/db/schema";
+import { Task, tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 const tabs = new Map([
   ["do", "bg-do"],
@@ -21,51 +19,34 @@ const tabs = new Map([
 ] as const);
 
 export default function TasksScreen() {
-  const [selected, setSelected] = useState<
-    "do" | "decide" | "delegate" | "delete"
-  >("do");
+  const [selected, setSelected] = useState<NonNullable<Task["priority"]>>("do");
 
-  const { data } = useQuery({
-    queryKey: ["tasks-priority", selected],
-    queryFn: async () =>
-      await db.select().from(tasks).where(eq(tasks.priority, selected)),
-  });
-  const { mutate: toggleTask } = useMutation({
-    mutationFn: async ({
-      id,
-      completedAt,
-    }: {
-      id: number;
-      completedAt: string | null;
-    }) => {
-      await db
-        .update(tasks)
-        .set({ completedAt: completedAt ?? null })
-        .where(eq(tasks.id, id));
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks-priority"] });
-    },
-  });
+  const { data } = useLiveQuery(
+    db.select().from(tasks).where(eq(tasks.priority, selected)),
+    [selected],
+  );
+
+  const toggleTask = (task: Task) => async () => {
+    await db
+      .update(tasks)
+      .set({ completedAt: task.completedAt ? null : new Date().toISOString() })
+      .where(eq(tasks.id, task.id));
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background p-6">
-      <StatusBar style="dark" />
       <Text className="font-public-sans-bold text-4xl text-primary">Tasks</Text>
       <View className="flex-row items-center gap-3 pt-5">
-        {Array.from(tabs.entries()).map(([tab, className]) => (
-          <Pressable key={tab} onPress={() => setSelected(tab)}>
+        {Array.from(tabs.entries()).map(([priority, className]) => (
+          <Pressable key={priority} onPress={() => setSelected(priority)}>
             {({ pressed }) => (
-              <ShadowView
+              <Paper
                 className={clsx(
                   "items-center justify-center rounded-full p-2 px-3",
-                  selected === tab && className,
+                  selected === priority && className,
                 )}
+                elevation={pressed ? 0 : 2}
                 style={{
-                  shadowOffset: {
-                    height: pressed ? 0 : 2,
-                    width: pressed ? 0 : 2,
-                  },
                   transform: [
                     { translateX: pressed ? 2 : 0 },
                     { translateY: pressed ? 2 : 0 },
@@ -74,47 +55,42 @@ export default function TasksScreen() {
               >
                 <Text
                   className={clsx(
-                    "font-public-sans-extra-light text-sm text-primary",
-                    selected === tab && "font-public-sans-bold",
+                    "font-public-sans-extra-light text-sm uppercase text-primary",
+                    selected === priority && "font-public-sans-bold",
                   )}
                 >
-                  {tab.toUpperCase()}
+                  {priority}
                 </Text>
-              </ShadowView>
+              </Paper>
             )}
           </Pressable>
         ))}
       </View>
       <View className="mt-6 border border-primary">
         <FlatList
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(task) => task.id.toString()}
           data={data}
           className="px-3 py-5"
-          renderItem={({ item }) => (
+          renderItem={({ item: task }) => (
             <View className="flex-row items-center gap-2">
-              <Pressable
-                onPress={() => {
-                  toggleTask({
-                    id: item.id,
-                    completedAt: item.completedAt
-                      ? null
-                      : new Date().toISOString(),
-                  });
-                }}
-              >
-                <ShadowView className="h-4 w-4 items-center justify-center rounded-full">
-                  {item.completedAt && (
-                    <Feather name="check" size={12} color={colors.primary} />
+              <Pressable onPress={toggleTask(task)}>
+                <Paper className="h-4 w-4 items-center justify-center rounded-full">
+                  {task.completedAt && (
+                    <Feather
+                      name="check"
+                      size={12}
+                      color={theme.colors.primary}
+                    />
                   )}
-                </ShadowView>
+                </Paper>
               </Pressable>
               <Text
                 className={clsx(
                   "font-public-sans-light text-primary",
-                  item.completedAt && "line-through",
+                  task.completedAt && "line-through",
                 )}
               >
-                {item.description}
+                {task.description}
               </Text>
             </View>
           )}

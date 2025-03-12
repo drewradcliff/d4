@@ -1,21 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { isNull } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
 import { Card, CardBase, CardText } from "@/components/card";
-import { colors } from "@/constants/colors";
 import { db } from "@/db/client";
-import { tasks } from "@/db/schema";
+import { theme } from "@/styles/theme";
 
 const MAX_ITEMS = 3;
 
 export default function PrioritizeScreen() {
-  const { data } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: () => db.select().from(tasks).where(isNull(tasks.priority)),
-  });
+  const { data } = useLiveQuery(
+    db.query.tasks.findMany({
+      where: (tasks, { isNull }) => isNull(tasks.priority),
+    }),
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -62,7 +61,7 @@ export default function PrioritizeScreen() {
             <Svg
               height="1"
               width="100%"
-              stroke={colors.primary}
+              stroke={theme.colors.primary}
               strokeDasharray="10 5"
             >
               <Line x1="0" y1="0" x2="100%" y2="0" />
@@ -72,7 +71,7 @@ export default function PrioritizeScreen() {
             <Svg
               height="100%"
               width="1"
-              stroke={colors.primary}
+              stroke={theme.colors.primary}
               strokeDasharray="10 5"
             >
               <Line x1="0" y1="0" x2="0" y2="100%" />
@@ -80,7 +79,7 @@ export default function PrioritizeScreen() {
           </View>
 
           {data
-            ?.toReversed()
+            .toReversed()
             .slice(0, MAX_ITEMS + 1)
             .toReversed()
             .map((item, index) => {
@@ -93,13 +92,11 @@ export default function PrioritizeScreen() {
                   className="absolute"
                   style={{ paddingTop: offset, paddingLeft: offset }}
                 >
-                  {!enabled ? (
-                    <CardBase className="bg-white">
+                  {!enabled ?
+                    <CardBase>
                       <CardText>{item.description}</CardText>
                     </CardBase>
-                  ) : (
-                    <Card data={item} />
-                  )}
+                  : <Card task={item} />}
                 </View>
               );
             })}

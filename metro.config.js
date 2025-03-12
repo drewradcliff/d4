@@ -7,7 +7,18 @@ const {
 
 /** @type {import("expo/metro-config").MetroConfig} */
 const config = getDefaultConfig(__dirname);
-config.resolver.sourceExts.push("sql");
+
+config.resolver = {
+  ...config.resolver,
+  assetExts: config.resolver.assetExts.filter((ext) => ext !== "svg"),
+  sourceExts: [...config.resolver.sourceExts, "sql", "svg"],
+};
+
+config.transformer = {
+  ...config.transformer,
+  babelTransformerPath: require.resolve("react-native-svg-transformer/expo"),
+};
+
 module.exports = wrapWithReanimatedMetroConfig(
   withNativeWind(config, { input: "./styles/global.css" }),
 );
