@@ -17,10 +17,15 @@ export const Paper = forwardRef<View, PaperProps>(
       ref={ref}
       style={[
         {
-          shadowColor: theme.colors.primary,
-          shadowOffset: { height: elevation, width: elevation },
-          shadowOpacity: 1,
-          shadowRadius: 0,
+          boxShadow: [
+            {
+              offsetX: elevation,
+              offsetY: elevation,
+              blurRadius: 0,
+              spreadDistance: 0,
+              color: theme.colors.primary,
+            },
+          ],
         },
         props.style,
       ]}

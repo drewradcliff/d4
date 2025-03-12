@@ -22,7 +22,11 @@
         "backgroundColor": "#ffffff"
       }
     },
-    "plugins": ["expo-router", "expo-sqlite"],
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "react-native-edge-to-edge"
+    ],
     "experiments": {
       "typedRoutes": true
     }

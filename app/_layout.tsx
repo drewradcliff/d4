@@ -9,8 +9,8 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { db } from "@/db/client";
@@ -60,7 +60,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={LightTheme}>
-      <StatusBar style="dark" />
+      <SystemBars style="dark" />
       <GestureHandlerRootView>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
