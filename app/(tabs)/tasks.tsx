@@ -12,10 +12,10 @@ import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const tabs = new Map([
-  ["do", "bg-do"],
-  ["decide", "bg-decide"],
-  ["delegate", "bg-delegate"],
-  ["delete", "bg-delete"],
+  ["do", "bg-background-do"],
+  ["decide", "bg-background-decide"],
+  ["delegate", "bg-background-delegate"],
+  ["delete", "bg-background-delete"],
 ] as const);
 
 export default function TasksScreen() {
@@ -53,12 +53,7 @@ export default function TasksScreen() {
                   ],
                 }}
               >
-                <Text
-                  className={clsx(
-                    "font-public-sans-extra-light text-sm uppercase text-primary",
-                    selected === priority && "font-public-sans-bold",
-                  )}
-                >
+                <Text className="font-public-sans-extra-light text-sm uppercase text-primary">
                   {priority}
                 </Text>
               </Paper>
