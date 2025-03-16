@@ -25,7 +25,7 @@ export default function InboxScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-6">
+    <SafeAreaView className="flex-1 bg-background p-6" edges={["top"]}>
       <Text className="font-public-sans-bold text-4xl text-primary">Inbox</Text>
       <View className="flex-row items-center gap-2 pt-5">
         <TextInput

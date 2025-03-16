@@ -34,7 +34,7 @@ export default function TasksScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-6">
+    <SafeAreaView className="flex-1 bg-background p-6" edges={["top"]}>
       <Text className="font-public-sans-bold text-4xl text-primary">Tasks</Text>
       <View className="flex-row items-center gap-3 pt-5">
         {Array.from(tabs.entries()).map(([priority, className]) => (
