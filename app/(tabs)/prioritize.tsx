@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
 import { Card, CardBase, CardText } from "@/components/card";
+import { Header } from "@/components/header";
 import { db } from "@/db/client";
 import { theme } from "@/styles/theme";
 
@@ -20,21 +21,21 @@ export default function PrioritizeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <View className="p-6">
-        <Text className="font-public-sans-bold text-4xl text-primary">
-          Prioritize
-        </Text>
-        <Text className="pt-1 font-public-sans-light text-secondary">
-          Drag tasks to quadrants to prioritize.{" "}
-          <Text
-            className="underline"
-            onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
-          >
-            Learn more
-          </Text>{" "}
-          about Eisenhower Matrix.
-        </Text>
-      </View>
+      <Header
+        heading="Prioritize"
+        subheading={
+          <Text>
+            Drag tasks to quadrants to prioritize.{" "}
+            <Text
+              className="underline"
+              onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
+            >
+              Learn more
+            </Text>{" "}
+            about Eisenhower Matrix.
+          </Text>
+        }
+      />
 
       <View className="flex-1">
         {/* headings */}

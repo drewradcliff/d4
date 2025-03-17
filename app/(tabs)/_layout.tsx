@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import clsx from "clsx";
 import {
   TabList,
   Tabs,
@@ -8,24 +9,17 @@ import {
 } from "expo-router/ui";
 import { ComponentProps, forwardRef } from "react";
 import { Pressable, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import TabBackground from "@/assets/tab-background.svg";
 import { Paper } from "@/components/paper";
 import { theme } from "@/styles/theme";
 
 export default function TabsLayout() {
-  const insets = useSafeAreaInsets();
-
   return (
-    <Tabs>
+    <Tabs className="bg-background">
       <TabSlot />
       <TabList asChild>
-        <Paper
-          className="mx-3 rounded-full px-10 py-6"
-          elevation={2}
-          style={{ marginBottom: insets.bottom }}
-        >
+        <Paper className="mb-safe-or-2 mx-2 rounded-full p-2" elevation={2}>
           <TabTrigger name="index" href="/" asChild>
             <TabButton icon="inbox">Inbox</TabButton>
           </TabTrigger>
@@ -41,17 +35,28 @@ export default function TabsLayout() {
   );
 }
 
-const TabButton = forwardRef<
-  View,
-  TabTriggerSlotProps & { icon: ComponentProps<typeof Feather>["name"] }
->(({ icon, children, isFocused, ...props }, ref) => (
-  <Pressable className="flex-row items-center gap-2" ref={ref} {...props}>
-    {isFocused && (
-      <View className="absolute -left-8">
+type TabButtonProps = Omit<TabTriggerSlotProps, "children"> & {
+  children: string;
+  icon: ComponentProps<typeof Feather>["name"];
+};
+
+const TabButton = forwardRef<View, TabButtonProps>(
+  ({ children, className, icon, isFocused, ...props }, ref) => (
+    <Pressable
+      className={clsx("items-center justify-center", className)}
+      hitSlop={4}
+      ref={ref}
+      {...props}
+    >
+      <View className={isFocused ? "visible" : "invisible"}>
         <TabBackground />
       </View>
-    )}
-    <Feather color={theme.colors.primary} name={icon} size={18} />
-    <Text className="font-public-sans-regular text-secondary">{children}</Text>
-  </Pressable>
-));
+      <View className="absolute w-full flex-row items-center justify-center gap-2">
+        <Feather color={theme.colors.primary} name={icon} size={18} />
+        <Text className="font-public-sans-regular text-secondary">
+          {children}
+        </Text>
+      </View>
+    </Pressable>
+  ),
+);

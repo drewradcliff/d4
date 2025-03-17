@@ -2,16 +2,28 @@ import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import { eq, isNull } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useState } from "react";
-import { FlatList, Pressable, Text, TextInput, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  Pressable,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
+const SCROLL_THRESHOLD = 50;
+
 export default function InboxScreen() {
+  const flatListRef = useRef<FlatList>(null);
+
   const [description, setDescription] = useState("");
 
   const { data } = useLiveQuery(
@@ -25,48 +37,61 @@ export default function InboxScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-6">
-      <Text className="font-public-sans-bold text-4xl text-primary">Inbox</Text>
-      <View className="flex-row items-center gap-2 pt-5">
-        <TextInput
-          className="flex-1 border border-primary bg-white p-3 font-public-sans-light text-primary"
-          placeholder="Add task..."
-          placeholderTextColor={theme.colors.secondary}
-          value={description}
-          onChangeText={setDescription}
-          onSubmitEditing={addTask}
-          submitBehavior="submit"
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <Header className="pb-0" heading="Inbox">
+        <View className="flex-row items-center gap-2">
+          <Paper className="flex-1 bg-white" elevation={2}>
+            <TextInput
+              className="p-3 font-public-sans-light text-xl leading-[0] text-primary"
+              placeholder="Add task..."
+              placeholderTextColor={theme.colors.secondary}
+              value={description}
+              onChangeText={setDescription}
+              onSubmitEditing={addTask}
+              submitBehavior="submit"
+            />
+          </Paper>
+          <Pressable hitSlop={8} onPress={addTask}>
+            {({ pressed }) => (
+              <Paper
+                className="size-12 items-center justify-center rounded-full"
+                elevation={pressed ? 0 : 2}
+                style={{
+                  transform: [
+                    { translateX: pressed ? 2 : 0 },
+                    { translateY: pressed ? 2 : 0 },
+                  ],
+                }}
+              >
+                <Feather name="plus" size={20} color={theme.colors.primary} />
+              </Paper>
+            )}
+          </Pressable>
+        </View>
+      </Header>
+
+      <KeyboardAvoidingView className="flex-1" behavior="padding">
+        <FlatList
+          ref={flatListRef}
+          contentContainerClassName="gap-4 p-6"
+          data={data}
+          keyboardShouldPersistTaps="handled"
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <TaskItem item={item} />}
+          onScroll={({ nativeEvent }) => {
+            if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
+              Keyboard.dismiss();
+            }
+          }}
         />
-        <Pressable onPress={addTask}>
-          {({ pressed }) => (
-            <Paper
-              className="rounded-full p-3"
-              elevation={pressed ? 0 : 2}
-              style={{
-                transform: [
-                  { translateX: pressed ? 2 : 0 },
-                  { translateY: pressed ? 2 : 0 },
-                ],
-              }}
-            >
-              <Feather name="plus" size={16} color={theme.colors.primary} />
-            </Paper>
-          )}
-        </Pressable>
-      </View>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ gap: 16, paddingTop: 20 }}
-        renderItem={({ item }) => <TaskItem item={item} />}
-      />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 function TaskItem({ item }: { item: Task }) {
   const [description, setDescription] = useState(item.description);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const isEmpty = !description.trim();
 
@@ -76,7 +101,6 @@ function TaskItem({ item }: { item: Task }) {
     } else {
       await db.update(tasks).set({ description }).where(eq(tasks.id, item.id));
     }
-    setIsEditing(false);
   };
 
   const deleteTask = async () => {
@@ -91,45 +115,44 @@ function TaskItem({ item }: { item: Task }) {
   };
 
   return (
-    <Pressable onPress={() => setIsEditing(!isEditing)}>
-      <View className="flex-row items-center gap-3">
-        <Pressable onPress={toggleTask}>
-          <Paper className="h-4 w-4 items-center justify-center rounded-full">
-            {item.completedAt && (
-              <Feather name="check" size={12} color={theme.colors.primary} />
-            )}
-          </Paper>
+    <View className="flex-row items-center gap-3">
+      <Pressable hitSlop={8} onPress={toggleTask}>
+        <Paper className="size-10 items-center justify-center rounded-full">
+          {item.completedAt && (
+            <Feather name="check" size={16} color={theme.colors.primary} />
+          )}
+        </Paper>
+      </Pressable>
+      <View className="flex-1 flex-row gap-2">
+        <TextInput
+          className={clsx(
+            "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
+            item.completedAt && "line-through",
+          )}
+          editable={!item.completedAt}
+          value={description}
+          onChangeText={setDescription}
+          onEndEditing={updateTask}
+          onSubmitEditing={updateTask}
+          onBlur={() => setIsFocused(false)}
+          onFocus={() => setIsFocused(true)}
+          onKeyPress={({ nativeEvent }) => {
+            if (nativeEvent.key === "Backspace" && isEmpty) {
+              deleteTask();
+            }
+          }}
+        />
+        <Pressable
+          hitSlop={8}
+          className={clsx(
+            "size-12 items-center justify-center",
+            isFocused ? "visible" : "invisible",
+          )}
+          onPress={deleteTask}
+        >
+          <Feather name="x" size={18} color={theme.colors.primary} />
         </Pressable>
-        {isEditing ?
-          <View className="flex-1 flex-row gap-2 pr-3">
-            <TextInput
-              className="flex-1 font-public-sans-light text-primary"
-              autoFocus
-              value={description}
-              onChangeText={setDescription}
-              onBlur={updateTask}
-              onKeyPress={({ nativeEvent }) => {
-                if (nativeEvent.key === "Enter") {
-                  updateTask();
-                } else if (nativeEvent.key === "Backspace" && isEmpty) {
-                  deleteTask();
-                }
-              }}
-            />
-            <Pressable onPress={deleteTask}>
-              <Feather name="x" size={18} color={theme.colors.primary} />
-            </Pressable>
-          </View>
-        : <Text
-            className={clsx(
-              "font-public-sans-light text-primary",
-              item.completedAt && "line-through",
-            )}
-          >
-            {description}
-          </Text>
-        }
       </View>
-    </Pressable>
+    </View>
   );
 }

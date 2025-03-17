@@ -6,16 +6,17 @@ import { useState } from "react";
 import { Pressable, Text, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const tabs = new Map([
-  ["do", "bg-do"],
-  ["decide", "bg-decide"],
-  ["delegate", "bg-delegate"],
-  ["delete", "bg-delete"],
+  ["do", "bg-background-do"],
+  ["decide", "bg-background-decide"],
+  ["delegate", "bg-background-delegate"],
+  ["delete", "bg-background-delete"],
 ] as const);
 
 export default function TasksScreen() {
@@ -34,51 +35,48 @@ export default function TasksScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background p-6">
-      <Text className="font-public-sans-bold text-4xl text-primary">Tasks</Text>
-      <View className="flex-row items-center gap-3 pt-5">
-        {Array.from(tabs.entries()).map(([priority, className]) => (
-          <Pressable key={priority} onPress={() => setSelected(priority)}>
-            {({ pressed }) => (
-              <Paper
-                className={clsx(
-                  "items-center justify-center rounded-full p-2 px-3",
-                  selected === priority && className,
-                )}
-                elevation={pressed ? 0 : 2}
-                style={{
-                  transform: [
-                    { translateX: pressed ? 2 : 0 },
-                    { translateY: pressed ? 2 : 0 },
-                  ],
-                }}
-              >
-                <Text
+    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <Header heading="Tasks">
+        <View className="flex-row items-center gap-3">
+          {Array.from(tabs.entries()).map(([priority, className]) => (
+            <Pressable key={priority} onPress={() => setSelected(priority)}>
+              {({ pressed }) => (
+                <Paper
                   className={clsx(
-                    "font-public-sans-extra-light text-sm uppercase text-primary",
-                    selected === priority && "font-public-sans-bold",
+                    "items-center justify-center rounded-full p-2 px-3",
+                    selected === priority && className,
                   )}
+                  elevation={pressed ? 0 : 2}
+                  style={{
+                    transform: [
+                      { translateX: pressed ? 2 : 0 },
+                      { translateY: pressed ? 2 : 0 },
+                    ],
+                  }}
                 >
-                  {priority}
-                </Text>
-              </Paper>
-            )}
-          </Pressable>
-        ))}
-      </View>
-      <View className="mt-6 border border-primary">
+                  <Text className="font-public-sans-extra-light text-sm uppercase text-primary">
+                    {priority}
+                  </Text>
+                </Paper>
+              )}
+            </Pressable>
+          ))}
+        </View>
+      </Header>
+      <View className="m-6 mt-0 border border-primary">
         <FlatList
           keyExtractor={(task) => task.id.toString()}
           data={data}
           className="px-3 py-5"
+          contentContainerClassName="gap-4"
           renderItem={({ item: task }) => (
             <View className="flex-row items-center gap-2">
               <Pressable onPress={toggleTask(task)}>
-                <Paper className="h-4 w-4 items-center justify-center rounded-full">
+                <Paper className="size-10 items-center justify-center rounded-full">
                   {task.completedAt && (
                     <Feather
                       name="check"
-                      size={12}
+                      size={16}
                       color={theme.colors.primary}
                     />
                   )}
