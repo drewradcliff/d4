@@ -16,7 +16,7 @@ import { theme } from "@/styles/theme";
 
 export default function TabsLayout() {
   return (
-    <Tabs>
+    <Tabs className="bg-background">
       <TabSlot />
       <TabList asChild>
         <Paper className="mb-safe-or-2 mx-2 rounded-full p-2" elevation={2}>
