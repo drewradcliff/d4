@@ -9,8 +9,8 @@ import { Header } from "@/components/header";
 import { db } from "@/db/client";
 import { theme } from "@/styles/theme";
 
-const MAX_ITEMS = 3;
 const LEARN_MORE_URL = "https://d4-landing-gamma.vercel.app/#how-it-works";
+const MAX_ITEMS = 3;
 
 export default function PrioritizeScreen() {
   const { data } = useLiveQuery(
