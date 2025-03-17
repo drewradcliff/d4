@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -8,9 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
+import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
 
 const tabs = new Map([
   ["do", "bg-background-do"],
@@ -26,13 +25,6 @@ export default function TasksScreen() {
     db.select().from(tasks).where(eq(tasks.priority, selected)),
     [selected],
   );
-
-  const toggleTask = (task: Task) => async () => {
-    await db
-      .update(tasks)
-      .set({ completedAt: task.completedAt ? null : new Date().toISOString() })
-      .where(eq(tasks.id, task.id));
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
@@ -69,29 +61,7 @@ export default function TasksScreen() {
           data={data}
           className="px-3 py-5"
           contentContainerClassName="gap-4"
-          renderItem={({ item: task }) => (
-            <View className="flex-row items-center gap-2">
-              <Pressable onPress={toggleTask(task)}>
-                <Paper className="size-10 items-center justify-center rounded-full">
-                  {task.completedAt && (
-                    <Feather
-                      name="check"
-                      size={16}
-                      color={theme.colors.primary}
-                    />
-                  )}
-                </Paper>
-              </Pressable>
-              <Text
-                className={clsx(
-                  "font-public-sans-light text-primary",
-                  task.completedAt && "line-through",
-                )}
-              >
-                {task.description}
-              </Text>
-            </View>
-          )}
+          renderItem={({ item }) => <TaskItem task={item} />}
         />
       </View>
     </SafeAreaView>

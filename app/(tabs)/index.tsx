@@ -1,6 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import clsx from "clsx";
-import { eq, isNull } from "drizzle-orm";
+import { isNull } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useRef, useState } from "react";
 import {
@@ -15,8 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
+import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
-import { Task, tasks } from "@/db/schema";
+import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const SCROLL_THRESHOLD = 50;
@@ -77,7 +77,7 @@ export default function InboxScreen() {
           data={data}
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <TaskItem item={item} />}
+          renderItem={({ item }) => <TaskItem task={item} />}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
               Keyboard.dismiss();
@@ -86,73 +86,5 @@ export default function InboxScreen() {
         />
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
-}
-
-function TaskItem({ item }: { item: Task }) {
-  const [description, setDescription] = useState(item.description);
-  const [isFocused, setIsFocused] = useState(false);
-
-  const isEmpty = !description.trim();
-
-  const updateTask = async () => {
-    if (isEmpty) {
-      await deleteTask();
-    } else {
-      await db.update(tasks).set({ description }).where(eq(tasks.id, item.id));
-    }
-  };
-
-  const deleteTask = async () => {
-    await db.delete(tasks).where(eq(tasks.id, item.id));
-  };
-
-  const toggleTask = async () => {
-    await db
-      .update(tasks)
-      .set({ completedAt: item.completedAt ? null : new Date().toISOString() })
-      .where(eq(tasks.id, item.id));
-  };
-
-  return (
-    <View className="flex-row items-center gap-3">
-      <Pressable hitSlop={8} onPress={toggleTask}>
-        <Paper className="size-10 items-center justify-center rounded-full">
-          {item.completedAt && (
-            <Feather name="check" size={16} color={theme.colors.primary} />
-          )}
-        </Paper>
-      </Pressable>
-      <View className="flex-1 flex-row gap-2">
-        <TextInput
-          className={clsx(
-            "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
-            item.completedAt && "line-through",
-          )}
-          editable={!item.completedAt}
-          value={description}
-          onChangeText={setDescription}
-          onEndEditing={updateTask}
-          onSubmitEditing={updateTask}
-          onBlur={() => setIsFocused(false)}
-          onFocus={() => setIsFocused(true)}
-          onKeyPress={({ nativeEvent }) => {
-            if (nativeEvent.key === "Backspace" && isEmpty) {
-              deleteTask();
-            }
-          }}
-        />
-        <Pressable
-          hitSlop={8}
-          className={clsx(
-            "size-12 items-center justify-center",
-            isFocused ? "visible" : "invisible",
-          )}
-          onPress={deleteTask}
-        >
-          <Feather name="x" size={18} color={theme.colors.primary} />
-        </Pressable>
-      </View>
-    </View>
   );
 }
