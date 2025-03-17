@@ -8,7 +8,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Pressable,
-  Text,
   TextInput,
   View,
 } from "react-native";
