@@ -8,25 +8,18 @@ import {
   TabTriggerSlotProps,
 } from "expo-router/ui";
 import { ComponentProps, forwardRef } from "react";
-import { Platform, Pressable, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Pressable, Text, View } from "react-native";
 
 import TabBackground from "@/assets/tab-background.svg";
 import { Paper } from "@/components/paper";
 import { theme } from "@/styles/theme";
 
 export default function TabsLayout() {
-  const insets = useSafeAreaInsets();
-
   return (
     <Tabs>
       <TabSlot />
       <TabList asChild>
-        <Paper
-          className="mx-2 rounded-full p-2"
-          elevation={2}
-          style={{ marginBottom: Platform.OS === "ios" ? insets.bottom : 8 }}
-        >
+        <Paper className="mb-safe-or-2 mx-2 rounded-full p-2" elevation={2}>
           <TabTrigger name="index" href="/" asChild>
             <TabButton icon="inbox">Inbox</TabButton>
           </TabTrigger>
