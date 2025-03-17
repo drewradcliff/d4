@@ -15,14 +15,16 @@ export function Header({
 }: HeaderProps) {
   return (
     <View className={clsx("z-10 gap-2 p-6", className)} {...props}>
-      <Text className="font-public-sans-bold text-5xl text-primary">
-        {heading}
-      </Text>
-      {subheading && (
-        <Text className="pt-1 font-public-sans-light text-secondary">
-          {subheading}
+      <View>
+        <Text className="font-public-sans-bold text-5xl text-primary">
+          {heading}
         </Text>
-      )}
+        {subheading && (
+          <Text className="font-public-sans-light text-base text-secondary">
+            {subheading}
+          </Text>
+        )}
+      </View>
       {children}
     </View>
   );
