@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
@@ -38,11 +39,7 @@ export default function InboxScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      {/* heading */}
-      <View className="z-10 gap-2 p-6 pb-0">
-        <Text className="font-public-sans-bold text-5xl text-primary">
-          Inbox
-        </Text>
+      <Header className="pb-0" heading="Inbox">
         <View className="flex-row items-center gap-2">
           <Paper className="flex-1 bg-white" elevation={2}>
             <TextInput
@@ -72,8 +69,8 @@ export default function InboxScreen() {
             )}
           </Pressable>
         </View>
-      </View>
-      {/* tasks */}
+      </Header>
+
       <KeyboardAvoidingView className="flex-1" behavior="padding">
         <FlatList
           ref={flatListRef}
