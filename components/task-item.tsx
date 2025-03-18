@@ -23,6 +23,7 @@ export function TaskItem({ task }: { task: Task }) {
     } else {
       await db.update(tasks).set({ description }).where(eq(tasks.id, task.id));
     }
+    setIsFocused(false);
   };
 
   const deleteTask = async () => {
@@ -35,6 +36,11 @@ export function TaskItem({ task }: { task: Task }) {
       .set({ completedAt: task.completedAt ? null : new Date().toISOString() })
       .where(eq(tasks.id, task.id));
   };
+
+  const textClassName = clsx(
+    "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
+    task.completedAt && "line-through",
+  );
 
   return (
     <Paper className="mb-4" elevation={2}>
@@ -49,30 +55,24 @@ export function TaskItem({ task }: { task: Task }) {
             )}
           </Paper>
         </Pressable>
-        <View className="flex-1 flex-row gap-2">
+        <View className="flex-1 flex-row items-center gap-2">
           {!isFocused ?
             <Text
+              suppressHighlighting
+              className={textClassName}
               onPress={() => setIsFocused(true)}
               onLongPress={drag}
-              className={clsx(
-                "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
-                task.completedAt && "line-through",
-              )}
             >
               {description}
             </Text>
           : <TextInput
-              className={clsx(
-                "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
-                task.completedAt && "line-through",
-              )}
+              autoFocus
+              className={textClassName}
               editable={!task.completedAt}
               value={description}
               onChangeText={setDescription}
               onEndEditing={updateTask}
               onSubmitEditing={updateTask}
-              onBlur={() => setIsFocused(false)}
-              onFocus={() => setIsFocused(true)}
               onKeyPress={({ nativeEvent }) => {
                 if (nativeEvent.key === "Backspace" && isEmpty) {
                   deleteTask();
