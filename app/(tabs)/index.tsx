@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import { isNull } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   FlatList,
   Keyboard,
@@ -22,8 +22,6 @@ import { theme } from "@/styles/theme";
 const SCROLL_THRESHOLD = 50;
 
 export default function InboxScreen() {
-  const flatListRef = useRef<FlatList>(null);
-
   const [description, setDescription] = useState("");
 
   const { data } = useLiveQuery(
@@ -72,7 +70,6 @@ export default function InboxScreen() {
 
       <KeyboardAvoidingView className="flex-1" behavior="padding">
         <FlatList
-          ref={flatListRef}
           contentContainerClassName="gap-4 p-6"
           data={data}
           keyboardShouldPersistTaps="handled"
