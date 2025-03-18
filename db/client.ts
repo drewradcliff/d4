@@ -7,4 +7,4 @@ export const expo = SQLite.openDatabaseSync("app.db", {
   enableChangeListener: true,
 });
 
-export const db = drizzle(expo, { schema, logger: true });
+export const db = drizzle(expo, { schema });

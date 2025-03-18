@@ -3,23 +3,17 @@ import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
-import {
-  RenderItemParams,
-  ScaleDecorator,
-} from "react-native-draggable-flatlist";
+import { useReorderableDrag } from "react-native-reorderable-list";
 
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
-export function TaskItem({
-  item: task,
-  drag,
-  isActive,
-}: RenderItemParams<Task>) {
+export function TaskItem({ task }: { task: Task }) {
   const [description, setDescription] = useState(task.description);
   const [isFocused, setIsFocused] = useState(false);
+  const drag = useReorderableDrag();
 
   const isEmpty = !description.trim();
 
@@ -43,51 +37,44 @@ export function TaskItem({
   };
 
   return (
-    <ScaleDecorator>
-      <Paper className="flex-row items-center gap-3 px-3 py-2" elevation={2}>
+    <Paper className="mb-4 flex-row items-center gap-3 px-3 py-2" elevation={2}>
+      <Pressable hitSlop={8} onPress={toggleTask} onLongPress={drag}>
+        <Paper className="size-10 items-center justify-center rounded-full">
+          {task.completedAt && (
+            <Feather name="check" size={16} color={theme.colors.primary} />
+          )}
+        </Paper>
+      </Pressable>
+      <View className="flex-1 flex-row gap-2">
+        <TextInput
+          className={clsx(
+            "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
+            task.completedAt && "line-through",
+          )}
+          editable={!task.completedAt}
+          value={description}
+          onChangeText={setDescription}
+          onEndEditing={updateTask}
+          onSubmitEditing={updateTask}
+          onBlur={() => setIsFocused(false)}
+          onFocus={() => setIsFocused(true)}
+          onKeyPress={({ nativeEvent }) => {
+            if (nativeEvent.key === "Backspace" && isEmpty) {
+              deleteTask();
+            }
+          }}
+        />
         <Pressable
           hitSlop={8}
-          onPress={toggleTask}
-          onLongPress={drag}
-          disabled={isActive}
+          className={clsx(
+            "size-12 items-center justify-center",
+            isFocused ? "visible" : "invisible",
+          )}
+          onPress={deleteTask}
         >
-          <Paper className="size-10 items-center justify-center rounded-full">
-            {task.completedAt && (
-              <Feather name="check" size={16} color={theme.colors.primary} />
-            )}
-          </Paper>
+          <Feather name="x" size={18} color={theme.colors.primary} />
         </Pressable>
-        <View className="flex-1 flex-row gap-2">
-          <TextInput
-            className={clsx(
-              "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
-              task.completedAt && "line-through",
-            )}
-            editable={!task.completedAt}
-            value={description}
-            onChangeText={setDescription}
-            onEndEditing={updateTask}
-            onSubmitEditing={updateTask}
-            onBlur={() => setIsFocused(false)}
-            onFocus={() => setIsFocused(true)}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === "Backspace" && isEmpty) {
-                deleteTask();
-              }
-            }}
-          />
-          <Pressable
-            hitSlop={8}
-            className={clsx(
-              "size-12 items-center justify-center",
-              isFocused ? "visible" : "invisible",
-            )}
-            onPress={deleteTask}
-          >
-            <Feather name="x" size={18} color={theme.colors.primary} />
-          </Pressable>
-        </View>
-      </Paper>
-    </ScaleDecorator>
+      </View>
+    </Paper>
   );
 }

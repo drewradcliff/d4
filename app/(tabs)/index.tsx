@@ -9,14 +9,17 @@ import {
   TextInput,
   View,
 } from "react-native";
-import DraggableFlatList from "react-native-draggable-flatlist";
+import ReorderableList, {
+  ReorderableListReorderEvent,
+  reorderItems,
+} from "react-native-reorderable-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
-import { Task, tasks } from "@/db/schema";
+import { tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const SCROLL_THRESHOLD = 50;
@@ -38,10 +41,16 @@ export default function InboxScreen() {
     setDescription("");
   };
 
-  const reorderTasks = async (data: Task[]) => {
+  const reorderTasks = async ({ from, to }: ReorderableListReorderEvent) => {
+    const items = reorderItems(data, from, to);
     await db.transaction(async (tx) => {
-      data.map(async (item, index) =>
-        tx.update(tasks).set({ position: index }).where(eq(tasks.id, item.id)),
+      await Promise.all(
+        items.map((item, index) =>
+          tx
+            .update(tasks)
+            .set({ position: index })
+            .where(eq(tasks.id, item.id)),
+        ),
       );
     });
   };
@@ -81,13 +90,13 @@ export default function InboxScreen() {
       </Header>
 
       <KeyboardAvoidingView className="flex-1" behavior="padding">
-        <DraggableFlatList
-          contentContainerClassName="gap-4 p-6"
+        <ReorderableList
           data={data}
+          className="flex-1 p-6"
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ ...props }) => <TaskItem {...props} />}
-          onDragEnd={({ data }) => reorderTasks(data)}
+          renderItem={({ item }) => <TaskItem task={item} />}
+          onReorder={reorderTasks}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
               Keyboard.dismiss();
