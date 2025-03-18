@@ -1,5 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { and, eq, gt, gte, isNull, lt, lte, sql } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
 import {
@@ -16,7 +16,7 @@ import { Header } from "@/components/header";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
-import { tasks, Task } from "@/db/schema";
+import { Task, tasks } from "@/db/schema";
 import { theme } from "@/styles/theme";
 
 const SCROLL_THRESHOLD = 50;
@@ -25,7 +25,11 @@ export default function InboxScreen() {
   const [description, setDescription] = useState("");
 
   const { data } = useLiveQuery(
-    db.select().from(tasks).where(isNull(tasks.priority)).orderBy(tasks.order),
+    db
+      .select()
+      .from(tasks)
+      .where(isNull(tasks.priority))
+      .orderBy(tasks.position),
   );
 
   const addTask = async () => {
@@ -34,51 +38,12 @@ export default function InboxScreen() {
     setDescription("");
   };
 
-  // Initial order:
-  // task 1: 1
-  // task 2: 2 <-- drag item
-  // task 3: 3
-  // task 4: 4
-
-  // shift items up:
-  // task 1: 1
-  // ---
-  // task 3: 2
-  // task 4: 4
-
-  // place dragged item:
-  // task 1: 1
-  // task 3: 2
-  // task 2: 3 <-- new position
-  // task 4: 4
-
-  const reorderTasks = async ({
-    task,
-    newOrder,
-  }: {
-    task: Task;
-    newOrder: number;
-  }) => {
-    if (task.order < newOrder) {
-      await db
-        .update(tasks)
-        .set({
-          order: sql`order - 1`,
-        })
-        .where(and(gt(tasks.order, task.order), lte(tasks.order, newOrder)));
-    } else if (task.order > newOrder) {
-      await db
-        .update(tasks)
-        .set({
-          order: sql`order + 1`,
-        })
-        .where(and(gte(tasks.order, newOrder), lt(tasks.order, task.order)));
-    }
-
-    await db
-      .update(tasks)
-      .set({ order: newOrder })
-      .where(eq(tasks.id, task.id));
+  const reorderTasks = async (data: Task[]) => {
+    await db.transaction(async (tx) => {
+      data.map(async (item, index) =>
+        tx.update(tasks).set({ position: index }).where(eq(tasks.id, item.id)),
+      );
+    });
   };
 
   return (
@@ -122,16 +87,7 @@ export default function InboxScreen() {
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ ...props }) => <TaskItem {...props} />}
-          onDragEnd={async ({ data }) => {
-            await Promise.all(
-              data.map((item, index) =>
-                db
-                  .update(tasks)
-                  .set({ order: index })
-                  .where(eq(tasks.id, item.id)),
-              ),
-            );
-          }}
+          onDragEnd={({ data }) => reorderTasks(data)}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
               Keyboard.dismiss();

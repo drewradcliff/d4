@@ -11,7 +11,7 @@ export const tasks = sqliteTable(
     priority: text("priority", {
       enum: ["do", "delegate", "decide", "delete"],
     }),
-    order: integer("order").default(0).notNull(),
+    position: integer("position").default(0).notNull(),
     createdAt: text("created_at")
       .default(sql`(current_timestamp)`)
       .notNull(),
