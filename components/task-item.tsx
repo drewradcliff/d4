@@ -38,7 +38,7 @@ export function TaskItem({ task }: { task: Task }) {
   };
 
   const textClassName = clsx(
-    "flex-1 font-public-sans-light text-xl leading-[0] text-primary",
+    "flex-1 py-4 font-public-sans-light text-xl leading-[0] text-primary",
     task.completedAt && "line-through",
   );
 
@@ -46,7 +46,7 @@ export function TaskItem({ task }: { task: Task }) {
     <Paper className="mb-4" elevation={2}>
       <Pressable
         onLongPress={drag}
-        className="flex-1 flex-row items-center gap-3 px-3 py-2"
+        className="flex-1 flex-row items-center gap-3 px-3 py-1"
       >
         <Pressable hitSlop={8} onLongPress={drag} onPress={toggleTask}>
           <Paper className="size-10 items-center justify-center rounded-full">

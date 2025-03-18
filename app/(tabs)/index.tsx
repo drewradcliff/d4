@@ -92,6 +92,7 @@ export default function InboxScreen() {
       <KeyboardAvoidingView className="flex-1" behavior="padding">
         <ReorderableList
           data={data}
+          cellAnimations={{ opacity: 1 }}
           className="flex-1 p-6"
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
