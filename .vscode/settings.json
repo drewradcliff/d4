@@ -11,9 +11,5 @@
     "source.fixAll.eslint": "explicit"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "tailwindCSS.experimental.classRegex": [
-    "clsx\\(([^)]+)\\)",
-    "tw\\(([^)]+)\\)"
-  ],
   "editor.formatOnSave": true
 }
