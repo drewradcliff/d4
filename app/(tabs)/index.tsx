@@ -1,5 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
 import {
@@ -37,7 +37,15 @@ export default function InboxScreen() {
 
   const addTask = async () => {
     if (!description.trim()) return;
-    await db.insert(tasks).values({ description });
+    const [{ position }] = await db
+      .select({ position: max(tasks.position) })
+      .from(tasks)
+      .where(isNull(tasks.priority))
+      .limit(1);
+
+    await db
+      .insert(tasks)
+      .values({ description, position: (position ?? 0) + 1 });
     setDescription("");
   };
 

@@ -1,7 +1,6 @@
 {
   "files.readonlyInclude": {
     ".expo/**": true,
-    "db/drizzle/**": true,
     "node_modules/**": true,
     ".eslintcache": true,
     "expo-env.d.ts": true,

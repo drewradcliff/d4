@@ -1,1 +1,0 @@
-ALTER TABLE `tasks` RENAME COLUMN "order" TO "position";
