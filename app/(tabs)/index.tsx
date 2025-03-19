@@ -1,15 +1,18 @@
 import { Feather } from "@expo/vector-icons";
-import { isNull } from "drizzle-orm";
+import { eq, isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
 import {
-  FlatList,
   Keyboard,
   KeyboardAvoidingView,
   Pressable,
   TextInput,
   View,
 } from "react-native";
+import ReorderableList, {
+  ReorderableListReorderEvent,
+  reorderItems,
+} from "react-native-reorderable-list";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
@@ -25,13 +28,39 @@ export default function InboxScreen() {
   const [description, setDescription] = useState("");
 
   const { data } = useLiveQuery(
-    db.select().from(tasks).where(isNull(tasks.priority)),
+    db
+      .select()
+      .from(tasks)
+      .where(isNull(tasks.priority))
+      .orderBy(tasks.position),
   );
 
   const addTask = async () => {
     if (!description.trim()) return;
-    await db.insert(tasks).values({ description });
+    const [{ position }] = await db
+      .select({ position: max(tasks.position) })
+      .from(tasks)
+      .where(isNull(tasks.priority))
+      .limit(1);
+
+    await db
+      .insert(tasks)
+      .values({ description, position: (position ?? 0) + 1 });
     setDescription("");
+  };
+
+  const reorderTasks = async ({ from, to }: ReorderableListReorderEvent) => {
+    const items = reorderItems(data, from, to);
+    await db.transaction(async (tx) => {
+      await Promise.all(
+        items.map((item, index) =>
+          tx
+            .update(tasks)
+            .set({ position: index })
+            .where(eq(tasks.id, item.id)),
+        ),
+      );
+    });
   };
 
   return (
@@ -69,12 +98,14 @@ export default function InboxScreen() {
       </Header>
 
       <KeyboardAvoidingView className="flex-1" behavior="padding">
-        <FlatList
-          contentContainerClassName="gap-4 p-6"
+        <ReorderableList
           data={data}
+          cellAnimations={{ opacity: 1 }}
+          className="flex-1 p-6"
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <TaskItem task={item} />}
+          onReorder={reorderTasks}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
               Keyboard.dismiss();

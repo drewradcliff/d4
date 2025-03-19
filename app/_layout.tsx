@@ -6,6 +6,7 @@ import {
 } from "@expo-google-fonts/public-sans";
 import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -13,7 +14,7 @@ import { useEffect } from "react";
 import { SystemBars } from "react-native-edge-to-edge";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { db } from "@/db/client";
+import { db, expo } from "@/db/client";
 import migrations from "@/db/drizzle/migrations";
 import { theme } from "@/styles/theme";
 
@@ -46,6 +47,8 @@ export default function RootLayout() {
     PublicSans_400Regular,
     PublicSans_700Bold,
   });
+
+  useDrizzleStudio(expo);
 
   const error = migrationsResult.error || fontsError;
   const isLoading = !migrationsResult.success || !fontsLoaded;

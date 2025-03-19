@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "fca76ef5-a39d-4c86-add6-9686a855c74f",
+  "id": "08b9b65e-d8c3-4354-9d16-3cf34197e9a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "tasks": {
@@ -27,6 +27,14 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "created_at": {
           "name": "created_at",
