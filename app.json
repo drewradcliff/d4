@@ -33,7 +33,8 @@
         {
           "fonts": [
             "./assets/fonts/Lexend-Bold.ttf",
-            "./assets/fonts/Lexend-Medium.ttf"
+            "./assets/fonts/Lexend-Medium.ttf",
+            "./node_modules/@react-native-vector-icons/fontawesome6/fonts/FontAwesome6_Solid.ttf"
           ]
         }
       ],

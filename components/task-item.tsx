@@ -1,10 +1,10 @@
-import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useReorderableDrag } from "react-native-reorderable-list";
 
+import { Icon } from "@/components/icon";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
@@ -51,7 +51,7 @@ export function TaskItem({ task }: { task: Task }) {
         <Pressable hitSlop={8} onLongPress={drag} onPress={toggleTask}>
           <Paper className="size-10 items-center justify-center rounded-full">
             {task.completedAt && (
-              <Feather name="check" size={16} color={theme.colors.primary} />
+              <Icon name="check" size={16} color={theme.colors.primary} />
             )}
           </Paper>
         </Pressable>
@@ -89,7 +89,7 @@ export function TaskItem({ task }: { task: Task }) {
             onPress={deleteTask}
             onLongPress={drag}
           >
-            <Feather name="x" size={18} color={theme.colors.primary} />
+            <Icon name="x" size={18} color={theme.colors.primary} />
           </Pressable>
         </View>
       </Pressable>

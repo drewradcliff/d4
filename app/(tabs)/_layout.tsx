@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import {
   TabList,
@@ -7,10 +6,11 @@ import {
   TabTrigger,
   TabTriggerSlotProps,
 } from "expo-router/ui";
-import { ComponentProps, forwardRef } from "react";
+import { forwardRef } from "react";
 import { Pressable, Text, View } from "react-native";
 
 import TabBackground from "@/assets/tab-background.svg";
+import { Icon } from "@/components/icon";
 import { Paper } from "@/components/paper";
 import { theme } from "@/tailwind.config";
 
@@ -24,7 +24,7 @@ export default function TabsLayout() {
             <TabButton icon="inbox">Inbox</TabButton>
           </TabTrigger>
           <TabTrigger name="prioritize" href="/prioritize" asChild>
-            <TabButton icon="zap">Prioritize</TabButton>
+            <TabButton icon="bolt">Prioritize</TabButton>
           </TabTrigger>
           <TabTrigger name="tasks" href="/tasks" asChild>
             <TabButton icon="list">Tasks</TabButton>
@@ -37,7 +37,7 @@ export default function TabsLayout() {
 
 type TabButtonProps = Omit<TabTriggerSlotProps, "children"> & {
   children: string;
-  icon: ComponentProps<typeof Feather>["name"];
+  icon: React.ComponentProps<typeof Icon>["name"];
 };
 
 const TabButton = forwardRef<View, TabButtonProps>(
@@ -52,7 +52,7 @@ const TabButton = forwardRef<View, TabButtonProps>(
         <TabBackground />
       </View>
       <View className="absolute w-full flex-row items-center justify-center gap-2">
-        <Feather color={theme.colors.primary} name={icon} size={18} />
+        <Icon color={theme.colors.primary} name={icon} size={18} />
         <Text className="font-lexend-medium text-secondary">{children}</Text>
       </View>
     </Pressable>

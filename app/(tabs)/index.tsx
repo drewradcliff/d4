@@ -1,4 +1,3 @@
-import { Feather } from "@expo/vector-icons";
 import { eq, isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
@@ -16,6 +15,7 @@ import ReorderableList, {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
+import { Icon } from "@/components/icon";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
@@ -90,7 +90,7 @@ export default function InboxScreen() {
                   ],
                 }}
               >
-                <Feather name="plus" size={20} color={theme.colors.primary} />
+                <Icon name="plus" size={20} color={theme.colors.primary} />
               </Paper>
             )}
           </Pressable>
