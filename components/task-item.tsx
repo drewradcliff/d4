@@ -8,6 +8,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  runOnJS,
 } from "react-native-reanimated";
 
 import { Paper } from "@/components/paper";
@@ -45,6 +46,11 @@ export function TaskItem({ task }: { task: Task }) {
       .where(eq(tasks.id, task.id));
   };
 
+  const updatePriority = async (priority: Task["priority"]) => {
+    if (!priority) return;
+    await db.update(tasks).set({ priority }).where(eq(tasks.id, task.id));
+  };
+
   const textClassName = clsx(
     "flex-1 py-4 font-public-sans-light text-xl leading-[0] text-primary",
     task.completedAt && "line-through",
@@ -62,9 +68,27 @@ export function TaskItem({ task }: { task: Task }) {
       if (isLongPressed.value) {
         translateY.value = event.translationY;
         translateX.value = event.translationX;
+        console.log("Y:", event.absoluteY);
+        console.log("X:", event.absoluteX);
       }
     })
-    .onEnd(() => {
+    .onEnd(({ absoluteX, absoluteY }) => {
+      if (absoluteY < 170 && absoluteY > 130) {
+        let newPriority: Task["priority"] = null;
+
+        if (absoluteX > 25 && absoluteX < 55) {
+          newPriority = "do";
+        } else if (absoluteX > 75 && absoluteX < 140) {
+          newPriority = "decide";
+        } else if (absoluteX > 150 && absoluteX < 235) {
+          newPriority = "delegate";
+        } else if (absoluteX > 245 && absoluteX < 315) {
+          newPriority = "delete";
+        }
+
+        runOnJS(updatePriority)(newPriority);
+      }
+
       translateY.value = withSpring(0);
       translateX.value = withSpring(0);
       scale.value = withSpring(1);
@@ -79,12 +103,13 @@ export function TaskItem({ task }: { task: Task }) {
       { translateX: translateX.value },
       { scale: scale.value },
     ],
+    zIndex: isLongPressed.value ? 999 : 1,
   }));
 
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={animatedStyle}>
-        <Paper className="mb-4" elevation={2}>
+        <Paper className="h-16" elevation={2}>
           <Pressable className="flex-1 flex-row items-center gap-3 px-3 py-1">
             <Pressable hitSlop={8} onPress={toggleTask}>
               <Paper className="size-10 items-center justify-center rounded-full">

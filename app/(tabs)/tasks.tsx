@@ -59,7 +59,7 @@ export default function TasksScreen() {
         <FlatList
           keyExtractor={(item) => item.id.toString()}
           data={data}
-          className="z-50 px-3 py-5"
+          className="z-50 overflow-visible px-3 py-5"
           contentContainerClassName="gap-4"
           keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => <TaskItem task={item} />}
