@@ -3,6 +3,10 @@ module.exports = /** @type {const} */ ({
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
+    fontFamily: {
+      "lexend-bold": "Lexend-Bold",
+      "lexend-medium": "Lexend-Medium",
+    },
     extend: {
       colors: {
         primary: "#150033",
@@ -24,12 +28,6 @@ module.exports = /** @type {const} */ ({
           delegate: "#95c8ff",
           delete: "#ff9995",
         },
-      },
-      fontFamily: {
-        "public-sans-extra-light": "PublicSans_200ExtraLight",
-        "public-sans-light": "PublicSans_300Light",
-        "public-sans-regular": "PublicSans_400Regular",
-        "public-sans-bold": "PublicSans_700Bold",
       },
     },
   },

@@ -41,24 +41,24 @@ export default function PrioritizeScreen() {
         {/* headings */}
         <View className="absolute w-full flex-row">
           <View className="flex-1">
-            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
+            <Text className="text-center font-lexend-bold text-xl text-placeholder">
               Urgent
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
+            <Text className="text-center font-lexend-bold text-xl text-placeholder">
               Not Urgent
             </Text>
           </View>
         </View>
         <View className="absolute h-full">
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
+            <Text className="overflow-visible font-lexend-bold text-xl text-placeholder">
               Important
             </Text>
           </View>
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
+            <Text className="overflow-visible font-lexend-bold text-xl text-placeholder">
               Not Important
             </Text>
           </View>

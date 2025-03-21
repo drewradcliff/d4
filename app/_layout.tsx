@@ -1,13 +1,6 @@
-import {
-  PublicSans_200ExtraLight,
-  PublicSans_300Light,
-  PublicSans_400Regular,
-  PublicSans_700Bold,
-} from "@expo-google-fonts/public-sans";
 import { DefaultTheme, Theme, ThemeProvider } from "@react-navigation/native";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
@@ -40,26 +33,16 @@ const LightTheme: Theme = {
 };
 
 export default function RootLayout() {
-  const migrationsResult = useMigrations(db, migrations);
-  const [fontsLoaded, fontsError] = useFonts({
-    PublicSans_200ExtraLight,
-    PublicSans_300Light,
-    PublicSans_400Regular,
-    PublicSans_700Bold,
-  });
+  const { error, success } = useMigrations(db, migrations);
 
   useDrizzleStudio(expo);
 
-  const error = migrationsResult.error || fontsError;
-  const isLoading = !migrationsResult.success || !fontsLoaded;
-
   useEffect(() => {
     if (error) throw error; // handled by error boundary
-    if (isLoading) return;
     SplashScreen.hideAsync();
-  }, [isLoading, error]);
+  }, [error]);
 
-  if (isLoading) return null;
+  if (!success) return null;
 
   return (
     <ThemeProvider value={LightTheme}>

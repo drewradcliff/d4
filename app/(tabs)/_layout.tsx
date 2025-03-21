@@ -53,9 +53,7 @@ const TabButton = forwardRef<View, TabButtonProps>(
       </View>
       <View className="absolute w-full flex-row items-center justify-center gap-2">
         <Feather color={theme.colors.primary} name={icon} size={18} />
-        <Text className="font-public-sans-regular text-secondary">
-          {children}
-        </Text>
+        <Text className="font-lexend-medium text-secondary">{children}</Text>
       </View>
     </Pressable>
   ),

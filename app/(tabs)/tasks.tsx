@@ -46,7 +46,7 @@ export default function TasksScreen() {
                     ],
                   }}
                 >
-                  <Text className="font-public-sans-extra-light text-sm uppercase text-primary">
+                  <Text className="font-lexend-medium text-sm uppercase text-primary">
                     {priority}
                   </Text>
                 </Paper>

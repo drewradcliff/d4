@@ -92,7 +92,7 @@ export function Card({
             )}
           >
             <Text
-              className="border-2 p-1 font-public-sans-bold text-2xl uppercase"
+              className="border-2 p-1 font-lexend-bold text-2xl uppercase"
               style={{ color: foregroundColor, borderColor: foregroundColor }}
             >
               {quadrant}
@@ -127,10 +127,7 @@ export function CardText({
   return (
     <View className="px-7 py-9">
       <Text
-        className={clsx(
-          "font-public-sans-bold text-4xl text-primary",
-          className,
-        )}
+        className={clsx("font-lexend-bold text-4xl text-primary", className)}
         {...props}
       />
     </View>

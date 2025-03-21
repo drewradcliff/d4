@@ -69,7 +69,7 @@ export default function InboxScreen() {
         <View className="flex-row items-center gap-2">
           <Paper className="flex-1 bg-white" elevation={2}>
             <TextInput
-              className="p-3 font-public-sans-light text-xl leading-[0] text-primary"
+              className="p-3 font-lexend-medium text-xl leading-[0] text-primary"
               placeholder="Add task..."
               placeholderTextColor={theme.colors.secondary}
               value={description}

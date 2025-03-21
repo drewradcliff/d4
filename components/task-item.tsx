@@ -38,7 +38,7 @@ export function TaskItem({ task }: { task: Task }) {
   };
 
   const textClassName = clsx(
-    "flex-1 py-4 font-public-sans-light text-xl leading-[0] text-primary",
+    "flex-1 py-4 font-lexend-medium text-xl leading-[0] text-primary",
     task.completedAt && "line-through",
   );
 

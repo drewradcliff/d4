@@ -27,7 +27,20 @@
         "backgroundColor": "#ffffff"
       }
     },
-    "plugins": ["expo-router", "expo-sqlite", "react-native-edge-to-edge"],
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Lexend-Bold.ttf",
+            "./assets/fonts/Lexend-Medium.ttf"
+          ]
+        }
+      ],
+      "expo-router",
+      "expo-sqlite",
+      "react-native-edge-to-edge"
+    ],
     "experiments": {
       "typedRoutes": true
     },

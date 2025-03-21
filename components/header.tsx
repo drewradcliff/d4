@@ -16,11 +16,11 @@ export function Header({
   return (
     <View className={clsx("z-10 gap-2 p-6", className)} {...props}>
       <View>
-        <Text className="font-public-sans-bold text-5xl text-primary">
+        <Text className="font-lexend-bold text-5xl text-primary">
           {heading}
         </Text>
         {subheading && (
-          <Text className="font-public-sans-light text-base text-secondary">
+          <Text className="font-lexend-medium text-base text-secondary">
             {subheading}
           </Text>
         )}
