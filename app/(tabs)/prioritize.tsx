@@ -7,7 +7,7 @@ import Svg, { Line } from "react-native-svg";
 import { Card, CardBase, CardText } from "@/components/card";
 import { Header } from "@/components/header";
 import { db } from "@/db/client";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const LEARN_MORE_URL = "https://d4-landing-gamma.vercel.app/#how-it-works";
 const MAX_ITEMS = 3;
@@ -41,24 +41,24 @@ export default function PrioritizeScreen() {
         {/* headings */}
         <View className="absolute w-full flex-row">
           <View className="flex-1">
-            <Text className="text-center font-lexend-bold text-xl text-placeholder">
+            <Text className="text-center font-lexend-bold text-xl text-tertiary">
               Urgent
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-center font-lexend-bold text-xl text-placeholder">
+            <Text className="text-center font-lexend-bold text-xl text-tertiary">
               Not Urgent
             </Text>
           </View>
         </View>
         <View className="absolute h-full">
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-lexend-bold text-xl text-placeholder">
+            <Text className="overflow-visible font-lexend-bold text-xl text-tertiary">
               Important
             </Text>
           </View>
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-lexend-bold text-xl text-placeholder">
+            <Text className="overflow-visible font-lexend-bold text-xl text-tertiary">
               Not Important
             </Text>
           </View>

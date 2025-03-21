@@ -13,7 +13,7 @@ import Animated, {
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
@@ -43,7 +43,7 @@ export function Card({
     ],
   }));
   const backgroundAnimatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: theme.colors.background[quadrant || "white"],
+    backgroundColor: theme.colors[quadrant || "white"],
     opacity: opacity.value,
   }));
 
@@ -75,7 +75,6 @@ export function Card({
     })
     .runOnJS(true);
 
-  const foregroundColor = quadrant ? theme.colors.foreground[quadrant] : "none";
   const isLeft = quadrant === "do" || quadrant === "delegate";
 
   return (
@@ -87,14 +86,12 @@ export function Card({
         >
           <View
             className={clsx(
-              "absolute bottom-0 m-6",
+              "absolute bottom-0 m-6 rounded-md border-4 border-black p-1",
               isLeft ? "right-0 -rotate-12" : "left-0 rotate-12",
             )}
+            style={{ mixBlendMode: "overlay" }} // since RN 0.77
           >
-            <Text
-              className="border-2 p-1 font-lexend-bold text-2xl uppercase"
-              style={{ color: foregroundColor, borderColor: foregroundColor }}
-            >
+            <Text className="font-lexend-bold text-2xl color-black">
               {quadrant}
             </Text>
           </View>

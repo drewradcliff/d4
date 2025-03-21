@@ -20,7 +20,7 @@ import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const SCROLL_THRESHOLD = 50;
 

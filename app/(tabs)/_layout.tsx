@@ -12,7 +12,7 @@ import { Pressable, Text, View } from "react-native";
 
 import TabBackground from "@/assets/tab-background.svg";
 import { Paper } from "@/components/paper";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 export default function TabsLayout() {
   return (

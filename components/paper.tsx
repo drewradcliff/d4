@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { forwardRef } from "react";
 import { View, ViewProps } from "react-native";
 
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 type PaperProps = ViewProps & {
   as?: React.ElementType;

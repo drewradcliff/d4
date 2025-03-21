@@ -8,7 +8,7 @@ import { useReorderableDrag } from "react-native-reorderable-list";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 export function TaskItem({ task }: { task: Task }) {
   const [description, setDescription] = useState(task.description);

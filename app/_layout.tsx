@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { db, expo } from "@/db/client";
 import migrations from "@/db/drizzle/migrations";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 import "react-native-reanimated";
 import "@/styles/global.css";
@@ -27,7 +27,7 @@ const LightTheme: Theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    card: theme.colors.background.DEFAULT,
+    card: theme.colors.background,
     text: theme.colors.primary,
   },
 };
