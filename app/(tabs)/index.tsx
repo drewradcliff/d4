@@ -1,28 +1,18 @@
 import { eq, isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Pressable,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Pressable, TextInput } from "react-native";
 import ReorderableList, {
   ReorderableListReorderEvent,
   reorderItems,
 } from "react-native-reorderable-list";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Header } from "@/components/header";
 import { Icon } from "@/components/icon";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
 import { theme } from "@/tailwind.config";
-
-const SCROLL_THRESHOLD = 50;
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
@@ -64,55 +54,52 @@ export default function InboxScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <Header className="pb-0" heading="Inbox">
-        <View className="flex-row items-center gap-2">
-          <Paper className="flex-1 bg-white" elevation={2}>
-            <TextInput
-              className="p-3 font-lexend-medium text-xl leading-[0] text-primary"
-              placeholder="Add task..."
-              placeholderTextColor={theme.colors.secondary}
-              value={description}
-              onChangeText={setDescription}
-              onSubmitEditing={addTask}
-              submitBehavior="submit"
-            />
-          </Paper>
-          <Pressable hitSlop={8} onPress={addTask}>
-            {({ pressed }) => (
-              <Paper
-                className="size-12 items-center justify-center rounded-full"
-                elevation={pressed ? 0 : 2}
-                style={{
-                  transform: [
-                    { translateX: pressed ? 2 : 0 },
-                    { translateY: pressed ? 2 : 0 },
-                  ],
-                }}
-              >
-                <Icon name="plus" size={20} color={theme.colors.primary} />
-              </Paper>
-            )}
-          </Pressable>
-        </View>
-      </Header>
+    <>
+      <Paper
+        className="mx-4 flex-row items-center rounded-md bg-white p-3"
+        elevation={4}
+      >
+        <TextInput
+          className="h-10 flex-1 font-lexend-medium text-xl leading-[0] text-primary"
+          onChangeText={setDescription}
+          onSubmitEditing={addTask}
+          placeholder="what's your next move?"
+          placeholderTextColor={theme.colors.secondary}
+          submitBehavior="submit"
+          value={description}
+        />
+        <Pressable onPress={addTask}>
+          {({ pressed }) => (
+            <Paper
+              className="size-10 items-center justify-center rounded-md bg-purple"
+              elevation={pressed ? 0 : 2}
+              style={{
+                transform: [
+                  { translateX: pressed ? 2 : 0 },
+                  { translateY: pressed ? 2 : 0 },
+                ],
+              }}
+            >
+              <Icon color={theme.colors.primary} name="plus" size={20} />
+            </Paper>
+          )}
+        </Pressable>
+      </Paper>
 
-      <KeyboardAvoidingView className="flex-1" behavior="padding">
+      <KeyboardAvoidingView behavior="padding" className="flex-1">
         <ReorderableList
-          data={data}
+          // styles
           cellAnimations={{ opacity: 1 }}
-          className="flex-1 p-6"
+          className="my-4"
+          contentContainerClassName="px-4 gap-2"
+          data={data}
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <TaskItem task={item} />}
           onReorder={reorderTasks}
-          onScroll={({ nativeEvent }) => {
-            if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
-              Keyboard.dismiss();
-            }
-          }}
+          renderItem={({ item }) => <TaskItem task={item} />}
+          showsVerticalScrollIndicator={false}
         />
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </>
   );
 }

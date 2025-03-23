@@ -43,15 +43,18 @@ export function TaskItem({ task }: { task: Task }) {
   );
 
   return (
-    <Paper className="mb-4" elevation={2}>
+    <Paper className="rounded-md bg-white" elevation={2}>
       <Pressable
         onLongPress={drag}
         className="flex-1 flex-row items-center gap-3 px-3 py-1"
       >
         <Pressable hitSlop={8} onLongPress={drag} onPress={toggleTask}>
-          <Paper className="size-10 items-center justify-center rounded-full">
+          <Paper
+            className="size-10 items-center justify-center rounded-full bg-white"
+            elevation={0}
+          >
             {task.completedAt && (
-              <Icon name="check" size={16} color={theme.colors.primary} />
+              <Icon name="check" size={20} color={theme.colors.primary} />
             )}
           </Paper>
         </Pressable>

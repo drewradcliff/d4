@@ -1,11 +1,9 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import * as WebBrowser from "expo-web-browser";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
 import { Card, CardBase, CardText } from "@/components/card";
-import { Header } from "@/components/header";
 import { db } from "@/db/client";
 import { theme } from "@/tailwind.config";
 
@@ -20,22 +18,19 @@ export default function PrioritizeScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <Header
-        heading="Prioritize"
-        subheading={
-          <Text>
-            Drag tasks to quadrants to prioritize.{" "}
-            <Text
-              className="underline"
-              onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
-            >
-              Learn more
-            </Text>{" "}
-            about Eisenhower Matrix.
-          </Text>
-        }
-      />
+    <>
+      <View className="px-4 pb-4">
+        <Text className="font-lexend-medium text-base text-secondary">
+          Drag tasks to quadrants to prioritize.{" "}
+          <Text
+            className="underline"
+            onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
+          >
+            Learn more
+          </Text>{" "}
+          about Eisenhower Matrix.
+        </Text>
+      </View>
 
       <View className="flex-1">
         {/* headings */}
@@ -93,7 +88,7 @@ export default function PrioritizeScreen() {
             .toReversed()
             .map((item, index) => {
               const enabled = index === Math.min(MAX_ITEMS, data.length - 1);
-              const offset = 16 * (MAX_ITEMS - 1 - index);
+              const offset = 20 * (MAX_ITEMS - 1 - index);
 
               return (
                 <View
@@ -111,6 +106,6 @@ export default function PrioritizeScreen() {
             })}
         </View>
       </View>
-    </SafeAreaView>
+    </>
   );
 }

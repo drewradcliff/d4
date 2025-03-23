@@ -86,12 +86,12 @@ export function Card({
         >
           <View
             className={clsx(
-              "absolute bottom-0 m-6 rounded-md border-4 border-black p-1",
+              "border-black absolute bottom-0 m-6 rounded-md border-4 p-1",
               isLeft ? "right-0 -rotate-12" : "left-0 rotate-12",
             )}
             style={{ mixBlendMode: "overlay" }} // since RN 0.77
           >
-            <Text className="font-lexend-bold text-2xl color-black">
+            <Text className="color-black font-lexend-bold text-2xl">
               {quadrant}
             </Text>
           </View>
@@ -109,7 +109,7 @@ export function CardBase({
 }: React.ComponentProps<typeof Paper>) {
   return (
     <Paper
-      className={clsx("bg-white", className)}
+      className={clsx("rounded-lg bg-white", className)}
       elevation={4}
       style={[{ height: CARD_SIZE, width: CARD_SIZE }, style]}
       {...props}

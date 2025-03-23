@@ -10,10 +10,10 @@ type PaperProps = ViewProps & {
 };
 
 export const Paper = forwardRef<View, PaperProps>(
-  ({ as: Component = View, elevation = 1, ...props }, ref) => (
+  ({ as: Component = View, elevation = 4, ...props }, ref) => (
     <Component
       {...props}
-      className={clsx("border border-primary bg-background", props.className)}
+      className={clsx("border-4 border-primary bg-background", props.className)}
       ref={ref}
       style={[
         {
