@@ -23,6 +23,7 @@ export function Card({
   style,
   ...props
 }: React.ComponentProps<typeof CardBase> & { task: Task }) {
+  const [isActive, setIsActive] = useState(false);
   const [quadrant, setQuadrant] = useState<Task["priority"]>(null);
 
   const translateX = useSharedValue(0);
@@ -60,7 +61,11 @@ export function Card({
         : null,
       );
     })
+    .onStart(() => {
+      setIsActive(true);
+    })
     .onEnd(async () => {
+      setIsActive(false);
       if (opacity.value === 1) {
         // transition task
         await db
@@ -79,7 +84,12 @@ export function Card({
 
   return (
     <GestureDetector gesture={pan}>
-      <CardBase as={Animated.View} style={[style, animatedStyle]} {...props}>
+      <CardBase
+        as={Animated.View}
+        elevation={isActive ? 8 : 4}
+        style={[style, animatedStyle]}
+        {...props}
+      >
         <Animated.View
           className="absolute size-full"
           style={backgroundAnimatedStyle}

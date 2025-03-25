@@ -32,7 +32,7 @@ export default function PrioritizeScreen() {
         </Text>
       </View>
 
-      <View className="flex-1">
+      <View className="mb-4 flex-1 overflow-hidden">
         {/* headings */}
         <View className="absolute w-full flex-row">
           <View className="flex-1">

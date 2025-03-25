@@ -32,12 +32,10 @@ export default function TabsLayout() {
   return (
     <Tabs asChild>
       <View className="py-safe-or-4 flex-1 bg-background">
-        <View className="flex-1">
-          <Text className="px-4 pt-4 font-lexend-bold text-5xl capitalize text-primary">
-            {routeMap.get(pathname as Href)?.title}
-          </Text>
-          <TabSlot />
-        </View>
+        <Text className="px-4 pt-4 font-lexend-bold text-5xl capitalize text-primary">
+          {routeMap.get(pathname as Href)?.title}
+        </Text>
+        <TabSlot />
         <TabList asChild>
           <Paper className="mx-4 rounded-full p-4" elevation={8}>
             {Array.from(routeMap.entries()).map(([href, { icon, title }]) => (

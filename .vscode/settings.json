@@ -12,8 +12,5 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "tailwindCSS.classAttributes": [
-    "className",
-    "contentContainerClassName"
-  ]
+  "tailwindCSS.classAttributes": ["className", "contentContainerClassName"]
 }
