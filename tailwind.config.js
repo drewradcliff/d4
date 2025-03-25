@@ -1,10 +1,10 @@
 const colors = /** @type {const} */ ({
-  white: "#ffffff",
-  red: "#eb5252",
-  yellow: "#efe368",
-  green: "#71ef68",
-  blue: "#68b9ef",
-  purple: "#d086e9",
+  white: "hsl(0, 0%, 100%)",
+  red: "hsl(0, 80%, 67%)",
+  yellow: "hsl(56, 80%, 67%)",
+  green: "hsl(104, 80%, 67%)",
+  blue: "hsl(200, 80%, 67%)",
+  purple: "hsl(280, 80%, 67%)",
 });
 
 /** @satisfies {import("tailwindcss").Config} */
@@ -16,10 +16,10 @@ module.exports = /** @type {const} */ ({
       ...colors,
 
       // light theme
-      primary: "#19181b",
-      secondary: "#524d58",
-      tertiary: "#bfbbc3",
-      background: "#f9f7f4",
+      primary: "hsl(270, 32%, 10%)",
+      secondary: "hsl(270, 16%, 33%)",
+      tertiary: "hsl(270, 8%, 67%)",
+      background: "hsl(24, 32%, 98%)",
 
       do: colors.green,
       decide: colors.yellow,
