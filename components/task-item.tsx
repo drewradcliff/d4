@@ -7,8 +7,8 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   runOnJS,
+  withTiming,
 } from "react-native-reanimated";
 
 import { Paper } from "@/components/paper";
@@ -59,7 +59,7 @@ export function TaskItem({ task }: { task: Task }) {
   const longPress = Gesture.LongPress()
     .onStart(() => {
       isLongPressed.value = true;
-      scale.value = withSpring(1.05);
+      scale.value = withTiming(1.05, { duration: 100 });
     })
     .minDuration(200);
 
@@ -73,7 +73,7 @@ export function TaskItem({ task }: { task: Task }) {
       }
     })
     .onEnd(({ absoluteX, absoluteY }) => {
-      if (absoluteY < 170 && absoluteY > 130) {
+      if (isLongPressed.value && absoluteY < 170 && absoluteY > 130) {
         let newPriority: Task["priority"] = null;
 
         if (absoluteX > 25 && absoluteX < 55) {
@@ -89,13 +89,13 @@ export function TaskItem({ task }: { task: Task }) {
         runOnJS(updatePriority)(newPriority);
       }
 
-      translateY.value = withSpring(0);
-      translateX.value = withSpring(0);
-      scale.value = withSpring(1);
+      translateY.value = withTiming(0, { duration: 100 });
+      translateX.value = withTiming(0, { duration: 100 });
+      scale.value = withTiming(1, { duration: 100 });
       isLongPressed.value = false;
     });
 
-  const gesture = Gesture.Simultaneous(longPress, pan);
+  const dragGesture = Gesture.Simultaneous(longPress, pan);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -107,7 +107,7 @@ export function TaskItem({ task }: { task: Task }) {
   }));
 
   return (
-    <GestureDetector gesture={gesture}>
+    <GestureDetector gesture={dragGesture}>
       <Animated.View style={animatedStyle}>
         <Paper className="h-16" elevation={2}>
           <Pressable className="flex-1 flex-row items-center gap-3 px-3 py-1">
