@@ -1,8 +1,11 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import * as WebBrowser from "expo-web-browser";
+import { useContext } from "react";
 import { Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
+import { TabBarHeightContext, TabView } from "@/app/(tabs)/_layout";
 import { Card, CardBase, CardText } from "@/components/card";
 import { db } from "@/db/client";
 import { theme } from "@/tailwind.config";
@@ -11,6 +14,9 @@ const LEARN_MORE_URL = "https://d4-landing-gamma.vercel.app/#how-it-works";
 const MAX_ITEMS = 3;
 
 export default function PrioritizeScreen() {
+  const tabBarHeight = useContext(TabBarHeightContext);
+  const insets = useSafeAreaInsets();
+
   const { data } = useLiveQuery(
     db.query.tasks.findMany({
       where: (tasks, { isNull }) => isNull(tasks.priority),
@@ -18,43 +24,43 @@ export default function PrioritizeScreen() {
   );
 
   return (
-    <>
-      <View className="px-4 pb-4">
-        <Text className="font-lexend-medium text-base text-secondary">
-          Drag tasks to quadrants to prioritize.{" "}
-          <Text
-            className="underline"
-            onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
-          >
-            Learn more
-          </Text>{" "}
-          about Eisenhower Matrix.
+    <TabView>
+      <Text className="mx-4 font-lexend-medium text-base leading-6 text-secondary">
+        Drag tasks to a corner to organize them using the Eisenhower Matrix.{" "}
+        <Text
+          className="underline"
+          onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
+        >
+          Learn more
         </Text>
-      </View>
+      </Text>
 
-      <View className="mb-4 flex-1 overflow-hidden">
+      <View
+        className="mt-4 flex-1"
+        style={{ paddingBottom: tabBarHeight + insets.bottom }}
+      >
         {/* headings */}
         <View className="absolute w-full flex-row">
           <View className="flex-1">
-            <Text className="text-center font-lexend-bold text-xl text-tertiary">
-              Urgent
+            <Text className="text-center font-lexend-bold text-base text-tertiary">
+              urgent
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-center font-lexend-bold text-xl text-tertiary">
-              Not Urgent
+            <Text className="text-center font-lexend-bold text-base text-tertiary">
+              not urgent
             </Text>
           </View>
         </View>
         <View className="absolute h-full">
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-lexend-bold text-xl text-tertiary">
-              Important
+            <Text className="overflow-visible font-lexend-bold text-base text-tertiary">
+              important
             </Text>
           </View>
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-lexend-bold text-xl text-tertiary">
-              Not Important
+            <Text className="overflow-visible font-lexend-bold text-base text-tertiary">
+              not important
             </Text>
           </View>
         </View>
@@ -106,6 +112,6 @@ export default function PrioritizeScreen() {
             })}
         </View>
       </View>
-    </>
+    </TabView>
   );
 }

@@ -1,13 +1,20 @@
 import { eq, isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useState } from "react";
-import { KeyboardAvoidingView, Pressable, TextInput } from "react-native";
+import { useContext, useState } from "react";
+import { Pressable } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import ReorderableList, {
   ReorderableListReorderEvent,
   reorderItems,
 } from "react-native-reorderable-list";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { TabBarHeightContext, TabView } from "@/app/(tabs)/_layout";
 import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
@@ -16,6 +23,21 @@ import { theme } from "@/tailwind.config";
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+
+  const tabBarHeight = useContext(TabBarHeightContext);
+  const insets = useSafeAreaInsets();
+
+  const keyboard = useAnimatedKeyboard({
+    isNavigationBarTranslucentAndroid: true,
+    isStatusBarTranslucentAndroid: true,
+  });
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    paddingBottom: Math.max(
+      keyboard.height.value + 16,
+      tabBarHeight + insets.bottom + 16,
+    ),
+  }));
 
   const { data } = useLiveQuery(
     db
@@ -54,19 +76,18 @@ export default function InboxScreen() {
   };
 
   return (
-    <>
+    <TabView>
       <Paper
         className="mx-4 flex-row items-center rounded-md bg-white p-3"
         elevation={4}
       >
-        <TextInput
-          className="h-10 flex-1 font-lexend-medium text-xl leading-[0] text-primary"
-          onChangeText={setDescription}
-          onSubmitEditing={addTask}
+        <Input
+          className="h-10 flex-1 font-lexend-medium text-sm text-primary"
           placeholder="what's your next move?"
-          placeholderTextColor={theme.colors.secondary}
           submitBehavior="submit"
           value={description}
+          onChangeText={setDescription}
+          onSubmitEditing={addTask}
         />
         <Pressable onPress={addTask}>
           {({ pressed }) => (
@@ -86,12 +107,11 @@ export default function InboxScreen() {
         </Pressable>
       </Paper>
 
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
+      <Animated.View className="flex-1" style={animatedStyle}>
         <ReorderableList
-          // styles
           cellAnimations={{ opacity: 1 }}
-          className="my-4"
-          contentContainerClassName="px-4 gap-2"
+          className="mt-4"
+          contentContainerClassName="gap-2 px-4"
           data={data}
           keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id.toString()}
@@ -99,7 +119,7 @@ export default function InboxScreen() {
           renderItem={({ item }) => <TaskItem task={item} />}
           showsVerticalScrollIndicator={false}
         />
-      </KeyboardAvoidingView>
-    </>
+      </Animated.View>
+    </TabView>
   );
 }

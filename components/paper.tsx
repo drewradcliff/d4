@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { forwardRef } from "react";
-import { View, ViewProps } from "react-native";
+import { Platform, View, ViewProps } from "react-native";
 
 import { theme } from "@/tailwind.config";
 
@@ -17,13 +17,12 @@ export const Paper = forwardRef<View, PaperProps>(
       ref={ref}
       style={[
         {
+          marginBottom: Platform.OS === "android" ? elevation : 0,
           boxShadow: [
             {
+              color: theme.colors.primary,
               offsetX: elevation,
               offsetY: elevation,
-              blurRadius: 0,
-              spreadDistance: 0,
-              color: theme.colors.primary,
             },
           ],
         },

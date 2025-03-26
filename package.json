@@ -61,6 +61,13 @@
     "experimentalTernaries": true,
     "plugins": [
       "prettier-plugin-tailwindcss"
+    ],
+    "tailwindAttributes": [
+      "className",
+      "contentContainerClassName"
+    ],
+    "tailwindFunctions": [
+      "clsx"
     ]
   },
   "volta": {

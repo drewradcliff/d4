@@ -30,6 +30,12 @@ module.exports = /** @type {const} */ ({
       "lexend-bold": "Lexend-Bold",
       "lexend-medium": "Lexend-Medium",
     },
+    fontSize: {
+      base: 16,
+      sm: 20,
+      md: 24,
+      lg: 40,
+    },
   },
   plugins: [],
 });

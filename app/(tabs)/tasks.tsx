@@ -4,6 +4,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useState } from "react";
 import { Pressable, Text, View, FlatList } from "react-native";
 
+import { TabView } from "@/app/(tabs)/_layout";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
@@ -25,7 +26,7 @@ export default function TasksScreen() {
   );
 
   return (
-    <>
+    <TabView>
       <View className="flex-row items-center gap-3 px-4 pb-4">
         {Array.from(tabs.entries()).map(([priority, className]) => (
           <Pressable key={priority} onPress={() => setSelected(priority)}>
@@ -43,7 +44,7 @@ export default function TasksScreen() {
                   ],
                 }}
               >
-                <Text className="font-lexend-medium text-sm uppercase text-primary">
+                <Text className="font-lexend-medium text-base uppercase text-primary">
                   {priority}
                 </Text>
               </Paper>
@@ -61,6 +62,6 @@ export default function TasksScreen() {
           renderItem={({ item }) => <TaskItem task={item} />}
         />
       </View>
-    </>
+    </TabView>
   );
 }

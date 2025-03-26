@@ -101,7 +101,7 @@ export function Card({
             )}
             style={{ mixBlendMode: "overlay" }} // since RN 0.77
           >
-            <Text className="color-black font-lexend-bold text-2xl">
+            <Text className="color-black font-lexend-bold text-md">
               {quadrant}
             </Text>
           </View>
@@ -134,7 +134,7 @@ export function CardText({
   return (
     <View className="px-7 py-9">
       <Text
-        className={clsx("font-lexend-bold text-4xl text-primary", className)}
+        className={clsx("font-lexend-bold text-lg text-primary", className)}
         {...props}
       />
     </View>

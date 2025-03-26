@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useReorderableDrag } from "react-native-reorderable-list";
 
 import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
@@ -38,7 +39,7 @@ export function TaskItem({ task }: { task: Task }) {
   };
 
   const textClassName = clsx(
-    "flex-1 py-4 font-lexend-medium text-xl leading-[0] text-primary",
+    "flex-1 py-4 font-lexend-medium text-sm text-primary",
     task.completedAt && "line-through",
   );
 
@@ -68,7 +69,7 @@ export function TaskItem({ task }: { task: Task }) {
             >
               {description}
             </Text>
-          : <TextInput
+          : <Input
               autoFocus
               className={textClassName}
               editable={!task.completedAt}
