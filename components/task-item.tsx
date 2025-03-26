@@ -1,14 +1,15 @@
-import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useReorderableDrag } from "react-native-reorderable-list";
 
+import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 export function TaskItem({ task }: { task: Task }) {
   const [description, setDescription] = useState(task.description);
@@ -38,20 +39,23 @@ export function TaskItem({ task }: { task: Task }) {
   };
 
   const textClassName = clsx(
-    "flex-1 py-4 font-public-sans-light text-xl leading-[0] text-primary",
+    "flex-1 py-4 font-lexend-medium text-sm text-primary",
     task.completedAt && "line-through",
   );
 
   return (
-    <Paper className="mb-4" elevation={2}>
+    <Paper className="rounded-md bg-white" elevation={2}>
       <Pressable
         onLongPress={drag}
         className="flex-1 flex-row items-center gap-3 px-3 py-1"
       >
         <Pressable hitSlop={8} onLongPress={drag} onPress={toggleTask}>
-          <Paper className="size-10 items-center justify-center rounded-full">
+          <Paper
+            className="size-10 items-center justify-center rounded-full bg-white"
+            elevation={0}
+          >
             {task.completedAt && (
-              <Feather name="check" size={16} color={theme.colors.primary} />
+              <Icon name="check" size={20} color={theme.colors.primary} />
             )}
           </Paper>
         </Pressable>
@@ -65,7 +69,7 @@ export function TaskItem({ task }: { task: Task }) {
             >
               {description}
             </Text>
-          : <TextInput
+          : <Input
               autoFocus
               className={textClassName}
               editable={!task.completedAt}
@@ -89,7 +93,7 @@ export function TaskItem({ task }: { task: Task }) {
             onPress={deleteTask}
             onLongPress={drag}
           >
-            <Feather name="x" size={18} color={theme.colors.primary} />
+            <Icon name="x" size={18} color={theme.colors.primary} />
           </Pressable>
         </View>
       </Pressable>

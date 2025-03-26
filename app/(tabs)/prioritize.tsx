@@ -1,18 +1,22 @@
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import * as WebBrowser from "expo-web-browser";
+import { useContext } from "react";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Line } from "react-native-svg";
 
+import { TabBarHeightContext, TabView } from "@/app/(tabs)/_layout";
 import { Card, CardBase, CardText } from "@/components/card";
-import { Header } from "@/components/header";
 import { db } from "@/db/client";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const LEARN_MORE_URL = "https://d4-landing-gamma.vercel.app/#how-it-works";
 const MAX_ITEMS = 3;
 
 export default function PrioritizeScreen() {
+  const tabBarHeight = useContext(TabBarHeightContext);
+  const insets = useSafeAreaInsets();
+
   const { data } = useLiveQuery(
     db.query.tasks.findMany({
       where: (tasks, { isNull }) => isNull(tasks.priority),
@@ -20,46 +24,43 @@ export default function PrioritizeScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <Header
-        heading="Prioritize"
-        subheading={
-          <Text>
-            Drag tasks to quadrants to prioritize.{" "}
-            <Text
-              className="underline"
-              onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
-            >
-              Learn more
-            </Text>{" "}
-            about Eisenhower Matrix.
-          </Text>
-        }
-      />
+    <TabView>
+      <Text className="mx-4 font-lexend-medium text-base leading-6 text-secondary">
+        Drag tasks to a corner to organize them using the Eisenhower Matrix.{" "}
+        <Text
+          className="underline"
+          onPress={() => WebBrowser.openBrowserAsync(LEARN_MORE_URL)}
+        >
+          Learn more
+        </Text>
+      </Text>
 
-      <View className="flex-1">
+      <View
+        className="mt-4 flex-1"
+        style={{ paddingBottom: tabBarHeight + insets.bottom }}
+      >
         {/* headings */}
         <View className="absolute w-full flex-row">
           <View className="flex-1">
-            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
-              Urgent
+            <Text className="text-center font-lexend-bold text-base text-tertiary">
+              urgent
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-center font-public-sans-bold text-xl text-placeholder">
-              Not Urgent
+            <Text className="text-center font-lexend-bold text-base text-tertiary">
+              not urgent
             </Text>
           </View>
         </View>
         <View className="absolute h-full">
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
-              Important
+            <Text className="overflow-visible font-lexend-bold text-base text-tertiary">
+              important
             </Text>
           </View>
           <View className="-ml-12 flex-1 -rotate-90 justify-center">
-            <Text className="overflow-visible font-public-sans-bold text-xl text-placeholder">
-              Not Important
+            <Text className="overflow-visible font-lexend-bold text-base text-tertiary">
+              not important
             </Text>
           </View>
         </View>
@@ -93,7 +94,7 @@ export default function PrioritizeScreen() {
             .toReversed()
             .map((item, index) => {
               const enabled = index === Math.min(MAX_ITEMS, data.length - 1);
-              const offset = 16 * (MAX_ITEMS - 1 - index);
+              const offset = 20 * (MAX_ITEMS - 1 - index);
 
               return (
                 <View
@@ -111,6 +112,6 @@ export default function PrioritizeScreen() {
             })}
         </View>
       </View>
-    </SafeAreaView>
+    </TabView>
   );
 }

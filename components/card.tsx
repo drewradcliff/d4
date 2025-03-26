@@ -13,7 +13,7 @@ import Animated, {
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const CARD_SIZE = 250;
 const MIN_DISTANCE = Math.floor(CARD_SIZE / 3);
@@ -23,6 +23,7 @@ export function Card({
   style,
   ...props
 }: React.ComponentProps<typeof CardBase> & { task: Task }) {
+  const [isActive, setIsActive] = useState(false);
   const [quadrant, setQuadrant] = useState<Task["priority"]>(null);
 
   const translateX = useSharedValue(0);
@@ -43,7 +44,7 @@ export function Card({
     ],
   }));
   const backgroundAnimatedStyle = useAnimatedStyle(() => ({
-    backgroundColor: theme.colors.background[quadrant || "white"],
+    backgroundColor: theme.colors[quadrant || "white"],
     opacity: opacity.value,
   }));
 
@@ -60,7 +61,11 @@ export function Card({
         : null,
       );
     })
+    .onStart(() => {
+      setIsActive(true);
+    })
     .onEnd(async () => {
+      setIsActive(false);
       if (opacity.value === 1) {
         // transition task
         await db
@@ -75,26 +80,28 @@ export function Card({
     })
     .runOnJS(true);
 
-  const foregroundColor = quadrant ? theme.colors.foreground[quadrant] : "none";
   const isLeft = quadrant === "do" || quadrant === "delegate";
 
   return (
     <GestureDetector gesture={pan}>
-      <CardBase as={Animated.View} style={[style, animatedStyle]} {...props}>
+      <CardBase
+        as={Animated.View}
+        elevation={isActive ? 8 : 4}
+        style={[style, animatedStyle]}
+        {...props}
+      >
         <Animated.View
           className="absolute size-full"
           style={backgroundAnimatedStyle}
         >
           <View
             className={clsx(
-              "absolute bottom-0 m-6",
+              "border-black absolute bottom-0 m-6 rounded-md border-4 p-1",
               isLeft ? "right-0 -rotate-12" : "left-0 rotate-12",
             )}
+            style={{ mixBlendMode: "overlay" }} // since RN 0.77
           >
-            <Text
-              className="border-2 p-1 font-public-sans-bold text-2xl uppercase"
-              style={{ color: foregroundColor, borderColor: foregroundColor }}
-            >
+            <Text className="color-black font-lexend-bold text-md">
               {quadrant}
             </Text>
           </View>
@@ -112,7 +119,7 @@ export function CardBase({
 }: React.ComponentProps<typeof Paper>) {
   return (
     <Paper
-      className={clsx("bg-white", className)}
+      className={clsx("rounded-lg bg-white", className)}
       elevation={4}
       style={[{ height: CARD_SIZE, width: CARD_SIZE }, style]}
       {...props}
@@ -127,10 +134,7 @@ export function CardText({
   return (
     <View className="px-7 py-9">
       <Text
-        className={clsx(
-          "font-public-sans-bold text-4xl text-primary",
-          className,
-        )}
+        className={clsx("font-lexend-bold text-lg text-primary", className)}
         {...props}
       />
     </View>
