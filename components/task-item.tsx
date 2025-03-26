@@ -1,8 +1,7 @@
-import { Feather } from "@expo/vector-icons";
 import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
@@ -11,10 +10,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
 import { Paper } from "@/components/paper";
 import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 export function TaskItem({ task }: { task: Task }) {
   const [description, setDescription] = useState(task.description);
@@ -52,7 +53,7 @@ export function TaskItem({ task }: { task: Task }) {
   };
 
   const textClassName = clsx(
-    "flex-1 py-4 font-public-sans-light text-xl leading-[0] text-primary",
+    "flex-1 py-4 font-lexend-medium text-sm text-primary",
     task.completedAt && "line-through",
   );
 
@@ -108,56 +109,56 @@ export function TaskItem({ task }: { task: Task }) {
 
   return (
     <GestureDetector gesture={dragGesture}>
-      <Animated.View style={animatedStyle}>
-        <Paper className="h-16" elevation={2}>
-          <Pressable className="flex-1 flex-row items-center gap-3 px-3 py-1">
-            <Pressable hitSlop={8} onPress={toggleTask}>
-              <Paper className="size-10 items-center justify-center rounded-full">
-                {task.completedAt && (
-                  <Feather
-                    name="check"
-                    size={16}
-                    color={theme.colors.primary}
-                  />
-                )}
-              </Paper>
-            </Pressable>
-            <View className="flex-1 flex-row items-center gap-2">
-              {!isFocused ?
-                <Text
-                  suppressHighlighting
-                  className={textClassName}
-                  onPress={() => setIsFocused(true)}
-                >
-                  {description}
-                </Text>
-              : <TextInput
-                  autoFocus
-                  className={textClassName}
-                  editable={!task.completedAt}
-                  value={description}
-                  onChangeText={setDescription}
-                  onEndEditing={updateTask}
-                  onSubmitEditing={updateTask}
-                  onKeyPress={({ nativeEvent }) => {
-                    if (nativeEvent.key === "Backspace" && isEmpty) {
-                      deleteTask();
-                    }
-                  }}
-                />
-              }
-              <Pressable
-                hitSlop={8}
-                className={clsx(
-                  "size-12 items-center justify-center",
-                  isFocused ? "visible" : "invisible",
-                )}
-                onPress={deleteTask}
-              >
-                <Feather name="x" size={18} color={theme.colors.primary} />
-              </Pressable>
-            </View>
+      <Animated.View className="h-20" style={animatedStyle}>
+        <Paper
+          className="flex-1 flex-row items-center gap-3 rounded-md bg-white px-3 py-1"
+          elevation={2}
+        >
+          <Pressable hitSlop={8} onPress={toggleTask}>
+            <Paper
+              className="size-10 items-center justify-center rounded-full bg-white"
+              elevation={0}
+            >
+              {task.completedAt && (
+                <Icon name="check" size={20} color={theme.colors.primary} />
+              )}
+            </Paper>
           </Pressable>
+          <View className="flex-1 flex-row items-center gap-2">
+            {!isFocused ?
+              <Text
+                suppressHighlighting
+                className={textClassName}
+                onPress={() => setIsFocused(true)}
+              >
+                {description}
+              </Text>
+            : <Input
+                autoFocus
+                className={textClassName}
+                editable={!task.completedAt}
+                value={description}
+                onChangeText={setDescription}
+                onEndEditing={updateTask}
+                onSubmitEditing={updateTask}
+                onKeyPress={({ nativeEvent }) => {
+                  if (nativeEvent.key === "Backspace" && isEmpty) {
+                    deleteTask();
+                  }
+                }}
+              />
+            }
+            <Pressable
+              hitSlop={8}
+              className={clsx(
+                "size-12 items-center justify-center",
+                isFocused ? "visible" : "invisible",
+              )}
+              onPress={deleteTask}
+            >
+              <Icon name="x" size={18} color={theme.colors.primary} />
+            </Pressable>
+          </View>
         </Paper>
       </Animated.View>
     </GestureDetector>

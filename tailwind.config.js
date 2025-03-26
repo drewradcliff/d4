@@ -1,36 +1,40 @@
+const colors = /** @type {const} */ ({
+  white: "hsl(0, 0%, 100%)",
+  red: "hsl(0, 80%, 67%)",
+  yellow: "hsl(56, 80%, 67%)",
+  green: "hsl(104, 80%, 67%)",
+  blue: "hsl(200, 80%, 67%)",
+  purple: "hsl(280, 80%, 67%)",
+});
+
 /** @satisfies {import("tailwindcss").Config} */
 module.exports = /** @type {const} */ ({
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {
-      colors: {
-        primary: "#150033",
-        secondary: "#524d58",
-        tabBackground: "#fde3ff",
-        placeholder: "#9c99a0",
+    colors: {
+      ...colors,
 
-        background: {
-          DEFAULT: "#faf7f5",
-          do: "#dfffd5",
-          decide: "#fdffda",
-          delegate: "#cce5ff",
-          delete: "#ffd5d5",
-          white: "#ffffff",
-        },
-        foreground: {
-          do: "#a3ff86",
-          decide: "#e1e591",
-          delegate: "#95c8ff",
-          delete: "#ff9995",
-        },
-      },
-      fontFamily: {
-        "public-sans-extra-light": "PublicSans_200ExtraLight",
-        "public-sans-light": "PublicSans_300Light",
-        "public-sans-regular": "PublicSans_400Regular",
-        "public-sans-bold": "PublicSans_700Bold",
-      },
+      // light theme
+      primary: "hsl(270, 32%, 10%)",
+      secondary: "hsl(270, 16%, 33%)",
+      tertiary: "hsl(270, 8%, 67%)",
+      background: "hsl(24, 32%, 98%)",
+
+      do: colors.green,
+      decide: colors.yellow,
+      delegate: colors.blue,
+      delete: colors.red,
+    },
+    fontFamily: {
+      "lexend-bold": "Lexend-Bold",
+      "lexend-medium": "Lexend-Medium",
+    },
+    fontSize: {
+      base: 16,
+      sm: 20,
+      md: 24,
+      lg: 40,
     },
   },
   plugins: [],

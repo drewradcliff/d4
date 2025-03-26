@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "d4",
-    "slug": "d4",
+    "name": "quadzilla",
+    "slug": "quadzilla",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "myapp",
+    "scheme": "quadzilla",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -14,17 +14,55 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "app.quadzilla",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "app.quadzilla",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
-    "plugins": ["expo-router", "expo-sqlite", "react-native-edge-to-edge"],
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Lexend-Bold.ttf",
+            "./assets/fonts/Lexend-Medium.ttf",
+            "./node_modules/@react-native-vector-icons/fontawesome6/fonts/FontAwesome6_Solid.ttf"
+          ]
+        }
+      ],
+      "expo-router",
+      "expo-sqlite",
+      "react-native-edge-to-edge"
+    ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "49e7d8ec-a277-4faf-a87b-30d9f1b7140d"
+      }
+    },
+    "owner": "quadzilla",
+    "install": {
+      "exclude": [
+        "react-native@~0.76.6",
+        "react-native-reanimated@~3.16.1",
+        "react-native-gesture-handler@~2.20.0",
+        "react-native-screens@~4.4.0",
+        "react-native-safe-area-context@~4.12.0",
+        "react-native-webview@~13.12.5"
+      ]
     }
   }
 }

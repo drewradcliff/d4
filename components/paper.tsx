@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { forwardRef } from "react";
-import { View, ViewProps } from "react-native";
+import { Platform, View, ViewProps } from "react-native";
 
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 type PaperProps = ViewProps & {
   as?: React.ElementType;
@@ -10,20 +10,19 @@ type PaperProps = ViewProps & {
 };
 
 export const Paper = forwardRef<View, PaperProps>(
-  ({ as: Component = View, elevation = 1, ...props }, ref) => (
+  ({ as: Component = View, elevation = 4, ...props }, ref) => (
     <Component
       {...props}
-      className={clsx("border border-primary bg-background", props.className)}
+      className={clsx("border-4 border-primary bg-background", props.className)}
       ref={ref}
       style={[
         {
+          marginBottom: Platform.OS === "android" ? elevation : 0,
           boxShadow: [
             {
+              color: theme.colors.primary,
               offsetX: elevation,
               offsetY: elevation,
-              blurRadius: 0,
-              spreadDistance: 0,
-              color: theme.colors.primary,
             },
           ],
         },

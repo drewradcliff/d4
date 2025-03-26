@@ -1,28 +1,43 @@
-import { Feather } from "@expo/vector-icons";
 import { isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useState } from "react";
-import {
-  FlatList,
-  Keyboard,
-  KeyboardAvoidingView,
-  Pressable,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useContext, useState } from "react";
+import { Keyboard, Pressable } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Header } from "@/components/header";
+import { TabBarHeightContext, TabView } from "@/app/(tabs)/_layout";
+import { Icon } from "@/components/icon";
+import { Input } from "@/components/input";
 import { Paper } from "@/components/paper";
 import { TaskItem } from "@/components/task-item";
 import { db } from "@/db/client";
 import { tasks } from "@/db/schema";
-import { theme } from "@/styles/theme";
+import { theme } from "@/tailwind.config";
 
 const SCROLL_THRESHOLD = 50;
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+
+  const tabBarHeight = useContext(TabBarHeightContext);
+  const insets = useSafeAreaInsets();
+
+  const keyboard = useAnimatedKeyboard({
+    isNavigationBarTranslucentAndroid: true,
+    isStatusBarTranslucentAndroid: true,
+  });
+
+  const paddingStyle = useAnimatedStyle(() => {
+    return {
+      height: Math.max(
+        keyboard.height.value + 16,
+        tabBarHeight + insets.bottom + 16,
+      ),
+    };
+  });
 
   const { data } = useLiveQuery(
     db
@@ -47,53 +62,50 @@ export default function InboxScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
-      <Header className="pb-0" heading="Inbox">
-        <View className="flex-row items-center gap-2">
-          <Paper className="flex-1 bg-white" elevation={2}>
-            <TextInput
-              className="p-3 font-public-sans-light text-xl leading-[0] text-primary"
-              placeholder="Add task..."
-              placeholderTextColor={theme.colors.secondary}
-              value={description}
-              onChangeText={setDescription}
-              onSubmitEditing={addTask}
-              submitBehavior="submit"
-            />
-          </Paper>
-          <Pressable hitSlop={8} onPress={addTask}>
-            {({ pressed }) => (
-              <Paper
-                className="size-12 items-center justify-center rounded-full"
-                elevation={pressed ? 0 : 2}
-                style={{
-                  transform: [
-                    { translateX: pressed ? 2 : 0 },
-                    { translateY: pressed ? 2 : 0 },
-                  ],
-                }}
-              >
-                <Feather name="plus" size={20} color={theme.colors.primary} />
-              </Paper>
-            )}
-          </Pressable>
-        </View>
-      </Header>
-
-      <KeyboardAvoidingView className="flex-1" behavior="padding">
-        <FlatList
-          data={data}
-          className="flex-1 p-6"
-          keyboardShouldPersistTaps="handled"
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <TaskItem task={item} />}
-          onScroll={({ nativeEvent }) => {
-            if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
-              Keyboard.dismiss();
-            }
-          }}
+    <TabView>
+      <Paper
+        className="mx-4 flex-row items-center rounded-md bg-white p-3"
+        elevation={4}
+      >
+        <Input
+          className="h-10 flex-1 font-lexend-medium text-sm text-primary"
+          placeholder="what's your next move?"
+          submitBehavior="submit"
+          value={description}
+          onChangeText={setDescription}
+          onSubmitEditing={addTask}
         />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <Pressable onPress={addTask}>
+          {({ pressed }) => (
+            <Paper
+              className="size-10 items-center justify-center rounded-md bg-purple"
+              elevation={pressed ? 0 : 2}
+              style={{
+                transform: [
+                  { translateX: pressed ? 2 : 0 },
+                  { translateY: pressed ? 2 : 0 },
+                ],
+              }}
+            >
+              <Icon color={theme.colors.primary} name="plus" size={20} />
+            </Paper>
+          )}
+        </Pressable>
+      </Paper>
+
+      <Animated.ScrollView
+        className="mt-4"
+        contentContainerClassName="gap-2 px-4"
+        keyboardShouldPersistTaps="handled"
+        onScroll={({ nativeEvent }) => {
+          if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
+            Keyboard.dismiss();
+          }
+        }}
+      >
+        {data?.map((task) => <TaskItem key={task.id} task={task} />)}
+        <Animated.View style={paddingStyle} />
+      </Animated.ScrollView>
+    </TabView>
   );
 }
