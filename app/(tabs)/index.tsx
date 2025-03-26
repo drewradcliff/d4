@@ -1,7 +1,7 @@
 import { isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useContext, useState } from "react";
-import { Keyboard, Pressable } from "react-native";
+import { FlatList, Keyboard, Pressable } from "react-native";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
@@ -30,14 +30,12 @@ export default function InboxScreen() {
     isStatusBarTranslucentAndroid: true,
   });
 
-  const paddingStyle = useAnimatedStyle(() => {
-    return {
-      height: Math.max(
-        keyboard.height.value + 16,
-        tabBarHeight + insets.bottom + 16,
-      ),
-    };
-  });
+  const paddingStyle = useAnimatedStyle(() => ({
+    height: Math.max(
+      keyboard.height.value + 16,
+      tabBarHeight + insets.bottom + 16,
+    ),
+  }));
 
   const { data } = useLiveQuery(
     db
@@ -93,19 +91,20 @@ export default function InboxScreen() {
         </Pressable>
       </Paper>
 
-      <Animated.ScrollView
+      <FlatList
         className="mt-4"
         contentContainerClassName="gap-2 px-4"
         keyboardShouldPersistTaps="handled"
+        data={data}
+        keyExtractor={(task) => task.id.toString()}
+        renderItem={({ item }) => <TaskItem task={item} />}
         onScroll={({ nativeEvent }) => {
           if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
             Keyboard.dismiss();
           }
         }}
-      >
-        {data?.map((task) => <TaskItem key={task.id} task={task} />)}
-        <Animated.View style={paddingStyle} />
-      </Animated.ScrollView>
+        ListFooterComponent={<Animated.View style={paddingStyle} />}
+      />
     </TabView>
   );
 }
