@@ -2,7 +2,12 @@ import clsx from "clsx";
 import { eq } from "drizzle-orm";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  FlatList,
+  Gesture,
+  GestureDetector,
+  NativeGesture,
+} from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,12 +22,17 @@ import { db } from "@/db/client";
 import { Task, tasks } from "@/db/schema";
 import { theme } from "@/tailwind.config";
 
-export function TaskItem({ task }: { task: Task }) {
+type TaskItemProps = {
+  scrollGesture: NativeGesture;
+  task: Task;
+};
+
+export function TaskItem({ scrollGesture, task }: TaskItemProps) {
   const [description, setDescription] = useState(task.description);
   const [isFocused, setIsFocused] = useState(false);
+  const [isGestureActive, setIsGestureActive] = useState(false);
   const translateY = useSharedValue(0);
   const translateX = useSharedValue(0);
-  const isLongPressed = useSharedValue(false);
   const scale = useSharedValue(1);
 
   const isEmpty = !description.trim();
@@ -57,24 +67,21 @@ export function TaskItem({ task }: { task: Task }) {
     task.completedAt && "line-through",
   );
 
-  const longPress = Gesture.LongPress()
-    .onStart(() => {
-      isLongPressed.value = true;
-      scale.value = withTiming(1.05, { duration: 100 });
-    })
-    .minDuration(200);
+  const longPress = Gesture.LongPress().onStart(() => {
+    runOnJS(setIsGestureActive)(true);
+    scale.value = withTiming(1.05, { duration: 100 });
+  });
 
   const pan = Gesture.Pan()
+    // .enabled(isGestureActive)
     .onUpdate((event) => {
-      if (isLongPressed.value) {
-        translateY.value = event.translationY;
-        translateX.value = event.translationX;
-        console.log("Y:", event.absoluteY);
-        console.log("X:", event.absoluteX);
-      }
+      translateY.value = event.translationY;
+      translateX.value = event.translationX;
+      console.log("Y:", event.absoluteY);
+      console.log("X:", event.absoluteX);
     })
     .onEnd(({ absoluteX, absoluteY }) => {
-      if (isLongPressed.value && absoluteY < 170 && absoluteY > 130) {
+      if (absoluteY < 170 && absoluteY > 130) {
         let newPriority: Task["priority"] = null;
 
         if (absoluteX > 25 && absoluteX < 55) {
@@ -93,10 +100,10 @@ export function TaskItem({ task }: { task: Task }) {
       translateY.value = withTiming(0, { duration: 100 });
       translateX.value = withTiming(0, { duration: 100 });
       scale.value = withTiming(1, { duration: 100 });
-      isLongPressed.value = false;
+      runOnJS(setIsGestureActive)(false);
     });
 
-  const dragGesture = Gesture.Simultaneous(longPress, pan);
+  const dragGesture = Gesture.Simultaneous(scrollGesture, pan, longPress);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -104,7 +111,7 @@ export function TaskItem({ task }: { task: Task }) {
       { translateX: translateX.value },
       { scale: scale.value },
     ],
-    zIndex: isLongPressed.value ? 999 : 1,
+    zIndex: isGestureActive ? 999 : 1,
   }));
 
   return (

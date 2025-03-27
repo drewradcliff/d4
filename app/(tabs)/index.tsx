@@ -2,6 +2,7 @@ import { isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useContext, useState } from "react";
 import { FlatList, Keyboard, Pressable } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
@@ -21,6 +22,8 @@ const SCROLL_THRESHOLD = 50;
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+
+  const native = Gesture.Native();
 
   const tabBarHeight = useContext(TabBarHeightContext);
   const insets = useSafeAreaInsets();
@@ -91,20 +94,24 @@ export default function InboxScreen() {
         </Pressable>
       </Paper>
 
-      <FlatList
-        className="mt-4"
-        contentContainerClassName="gap-2 px-4"
-        keyboardShouldPersistTaps="handled"
-        data={data}
-        keyExtractor={(task) => task.id.toString()}
-        renderItem={({ item }) => <TaskItem task={item} />}
-        onScroll={({ nativeEvent }) => {
-          if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
-            Keyboard.dismiss();
-          }
-        }}
-        ListFooterComponent={<Animated.View style={paddingStyle} />}
-      />
+      <GestureDetector gesture={native}>
+        <FlatList
+          className="mt-4"
+          contentContainerClassName="gap-2 px-4"
+          keyboardShouldPersistTaps="handled"
+          data={data}
+          keyExtractor={(task) => task.id.toString()}
+          renderItem={({ item }) => (
+            <TaskItem scrollGesture={native} task={item} />
+          )}
+          onScroll={({ nativeEvent }) => {
+            if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
+              Keyboard.dismiss();
+            }
+          }}
+          ListFooterComponent={<Animated.View style={paddingStyle} />}
+        />
+      </GestureDetector>
     </TabView>
   );
 }
