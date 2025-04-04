@@ -1,11 +1,12 @@
 import { isNull, max } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { FlatList, Keyboard, Pressable } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
+  useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -19,9 +20,14 @@ import { tasks } from "@/db/schema";
 import { theme } from "@/tailwind.config";
 
 const SCROLL_THRESHOLD = 50;
+const ITEM_HEIGHT = 70; // matches the height of the TaskItem
 
 export default function InboxScreen() {
   const [description, setDescription] = useState("");
+  const [isReordering, setIsReordering] = useState(false);
+  const itemPositions = useSharedValue<{ [key: string]: number }>({});
+  const itemRefs = useRef(new Map<string, { y: number; height: number }>());
+  const movingItemId = useSharedValue<string | null>(null);
 
   const native = Gesture.Native();
 
@@ -60,6 +66,16 @@ export default function InboxScreen() {
       .insert(tasks)
       .values({ description, position: (position ?? 0) + 1 });
     setDescription("");
+  };
+
+  const handleReorderStart = () => {
+    setIsReordering(true);
+  };
+
+  const handleReorderEnd = () => {
+    setIsReordering(false);
+    // Here we would update the positions in the database
+    // But for now we're just focusing on the animation
   };
 
   return (
@@ -101,14 +117,26 @@ export default function InboxScreen() {
           keyboardShouldPersistTaps="handled"
           data={data}
           keyExtractor={(task) => task.id.toString()}
-          renderItem={({ item }) => (
-            <TaskItem scrollGesture={native} task={item} />
+          renderItem={({ item, index }) => (
+            <TaskItem
+              scrollGesture={native}
+              task={item}
+              onReorderStart={handleReorderStart}
+              onReorderEnd={handleReorderEnd}
+              itemRefs={itemRefs}
+              itemPositions={itemPositions}
+              itemHeight={ITEM_HEIGHT}
+              movingItemId={movingItemId}
+              currentIndex={index}
+              tasksCount={data?.length || 0}
+            />
           )}
           onScroll={({ nativeEvent }) => {
             if (nativeEvent.contentOffset.y < -SCROLL_THRESHOLD) {
               Keyboard.dismiss();
             }
           }}
+          scrollEnabled={!isReordering}
           ListFooterComponent={<Animated.View style={paddingStyle} />}
         />
       </GestureDetector>
